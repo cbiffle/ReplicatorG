@@ -15,8 +15,7 @@ import replicatorg.machine.model.ToolModel;
 import replicatorg.util.Point5d;
 
 public class Makerbot4GDriver extends Sanguino3GDriver {
-
-	protected boolean stepperExtruderFanEnabled = false;
+	private boolean stepperExtruderFanEnabled = false;
 
 	@Override
 	public String getDriverName() {
@@ -43,29 +42,13 @@ public class Makerbot4GDriver extends Sanguino3GDriver {
 		super.stop(abort);
 	}
 	
-	protected Iterable<AxisId> getHijackedAxes(int toolhead){
+	private Iterable<AxisId> getHijackedAxes(int toolhead){
 		Vector<AxisId> axes = new Vector<AxisId>();
 		AxisId toolheadAxis = machine.getTool(toolhead).getMotorStepperAxis();
 		if( extruderHijackedMap.containsKey( toolheadAxis ) )
 			axes.add(toolheadAxis);
 		return axes;
 	}	
-
-//	/** 
-//	 * Returns the hijacked axes for the current tool.
-//	 */
-//	@Deprecated
-//	private Iterable<AxisId> getHijackedAxes() {
-//		Vector<AxisId> axes = new Vector<AxisId>();
-//		
-//		for ( Map.Entry<AxisId,ToolModel> entry : stepExtruderMap.entrySet()) {
-//			ToolModel curTool = machine.currentTool();
-//			if (curTool.equals(entry.getValue())) {
-//				axes.add(curTool.getMotorStepperAxis());
-//			}
-//		}
-//		return axes;
-//	}
 
 	/** 
 	 * Each Axis can be overridden (hijacked) by XML settings. Return all overridden
@@ -129,7 +112,6 @@ public class Makerbot4GDriver extends Sanguino3GDriver {
 	
 		// Set the current position explicitly instead of calling the super, to avoid sending the current position command twice.
 		currentPosition.set(p);
-//		super.setCurrentPosition(p);
 	}
 
 	@Override
@@ -149,7 +131,6 @@ public class Makerbot4GDriver extends Sanguino3GDriver {
 			return null;
 		}
 		
-//		Base.logger.fine("Reconciling : "+machine.stepsToMM(steps).toString());
 		return machine.stepsToMM(steps);
 	}
 	
@@ -172,8 +153,9 @@ public class Makerbot4GDriver extends Sanguino3GDriver {
 	
 	/**
 	 * Overridden to not talk to the DC motor driver. This driver is reused for the stepper motor fan
+	 * @deprecated
 	 */
-	@Override
+	@Deprecated @Override
 	public void setMotorSpeedPWM(int pwm) throws RetryException {
 		machine.currentTool().setMotorSpeedPWM(pwm);
 	}
@@ -209,7 +191,7 @@ public class Makerbot4GDriver extends Sanguino3GDriver {
 	 * Will turn on/off the stepper extruder fan if it's not already in the correct state.
 	 * 
 	 */
-	public void enableStepperExtruderFan(boolean enabled, int toolIndex) throws RetryException {
+	protected void enableStepperExtruderFan(boolean enabled, int toolIndex) throws RetryException {
 		
 		// Always re-enable the fan when 
 		if (this.stepperExtruderFanEnabled == enabled) return;
