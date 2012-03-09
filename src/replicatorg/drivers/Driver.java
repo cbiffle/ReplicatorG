@@ -270,12 +270,12 @@ public interface Driver {
 	/***************************************************************************
 	 * Motor interface functions
 	 **************************************************************************/
-	public void setMotorDirection(int dir);
+	@Deprecated public void setMotorDirection(int dir);
 	public void setMotorDirection(int dir, int toolhead);
 
 	public void setMotorRPM(double rpm, int toolhead) throws RetryException;
 
-	public void setMotorSpeedPWM(int pwm) throws RetryException;
+	@Deprecated public void setMotorSpeedPWM(int pwm) throws RetryException;
 	public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException;
 
 	public double getMotorRPM();
@@ -286,17 +286,17 @@ public interface Driver {
 	 * Enable motor until stopped by disableMotor
 	 * @throws RetryException 
 	 */
-	public void enableMotor() throws RetryException;
+	@Deprecated public void enableMotor() throws RetryException;
 	public void enableMotor(int toolhead) throws RetryException;
 
 	/**
 	 * Enable motor for a fixed duration, then disable
 	 * @throws RetryException 
 	 */
-	public void enableMotor(long millis) throws RetryException;
+	@Deprecated public void enableMotor(long millis) throws RetryException;
 	public void enableMotor(long millis, int toolhead) throws RetryException;
 
-	public void disableMotor() throws RetryException;
+	@Deprecated public void disableMotor() throws RetryException;
 	public void disableMotor(int toolhead) throws RetryException;
 
 	/***************************************************************************
@@ -321,7 +321,7 @@ public interface Driver {
 	 * Temperature interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void setTemperature(double temperature) throws RetryException;
+	@Deprecated public void setTemperature(double temperature) throws RetryException;
 	public void setTemperature(double temperature, int toolIndex) throws RetryException;
 	public void readTemperature();
 	
@@ -333,7 +333,7 @@ public interface Driver {
 	 * Platform Temperature interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void setPlatformTemperature(double temperature) throws RetryException;
+	@Deprecated public void setPlatformTemperature(double temperature) throws RetryException;
 	public void setPlatformTemperature(double temperature, int toolIndex) throws RetryException;
 	
 	public void readPlatformTemperature();
@@ -369,10 +369,10 @@ public interface Driver {
 	 * Fan interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void enableFan() throws RetryException;
+	@Deprecated public void enableFan() throws RetryException;
 	public void enableFan(int toolhead) throws RetryException;
 
-	public void disableFan() throws RetryException;
+	@Deprecated public void disableFan() throws RetryException;
 	public void disableFan(int toolhead) throws RetryException;
 
 	
@@ -380,7 +380,7 @@ public interface Driver {
 	 * abp interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException;
+	@Deprecated public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException;
 	public void setAutomatedBuildPlatformRunning(boolean state, int toolhead) throws RetryException;
 	
 	/***************************************************************************

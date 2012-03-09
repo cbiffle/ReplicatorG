@@ -101,13 +101,13 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		machine = new MachineModel();
 	}	
 	
-	public void loadXML(Node xml) {
+	@Override public void loadXML(Node xml) {
 	}
 	
-	public void updateManualControl() {
+	@Override public void updateManualControl() {
 	}
 	
-	public boolean isPassthroughDriver() {
+	@Override public boolean isPassthroughDriver() {
 		return false;
 	}
 	
@@ -115,11 +115,11 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Execute a line of GCode directly (ie, don't use the parser)
 	 * @param code The line of GCode that we should execute
 	 */
-	public void executeGCodeLine(String code) {
+	@Override public void executeGCodeLine(String code) {
 		Base.logger.severe("Ignoring executeGCode command: " + code);
 	}
 
-	public void dispose() {
+	@Override public void dispose() {
 		if (Base.logger.isLoggable(Level.FINE)) {
 			Base.logger.fine("Disposing of driver " + getDriverName());
 		}
@@ -130,11 +130,11 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Initialization handling functions
 	 **************************************************************************/
 
-	public void initialize() {
+	@Override public void initialize() {
 		setInitialized(true);
 	}
 
-	public void uninitialize() {
+	@Override public void uninitialize() {
 		setInitialized(false);
 	}
 
@@ -146,7 +146,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		}
 	}
 
-	public boolean isInitialized() {
+	@Override public boolean isInitialized() {
 		return isInitialized.get();
 	}
 
@@ -154,7 +154,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Error handling functions
 	 **************************************************************************/
 
-	public void assessState() {
+	@Override public void assessState() {
 	}
 	
 	protected void setError(DriverError newError) {
@@ -166,15 +166,15 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	}
 
 	
-	public boolean hasError() {
+	@Override public boolean hasError() {
 		return (errorList.size() > 0);
 	}
 	
-	public DriverError getError() {
+	@Override public DriverError getError() {
 		return errorList.remove();
 	}
 
-	@Deprecated
+	@Override @Deprecated
 	public void checkErrors() throws BuildFailureException {
 		if (errorList.size() > 0) {
 			throw new BuildFailureException(getError().getMessage());
@@ -182,7 +182,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	}
 
 
-	public boolean isFinished() {
+	@Override public boolean isFinished() {
 		return true;
 	}
 
@@ -193,7 +193,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	/**
 	 * Is our buffer empty? If don't have a buffer, its always true.
 	 */
-	public boolean isBufferEmpty() {
+	@Override public boolean isBufferEmpty() {
 		return true;
 	}
 
@@ -201,7 +201,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Firmware information functions
 	 **************************************************************************/
 
-	public String getFirmwareInfo() {
+	@Override public String getFirmwareInfo() {
 		return firmwareName + " v" + getVersion();
 	}
 	
@@ -211,15 +211,15 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		return "Unnamed Bot (a Sad Bot)";
 	}
 
-	public Version getVersion() {
+	@Override public Version getVersion() {
 		return version;
 	}
 	
-	public Version getMinimumVersion() {
+	@Override public Version getMinimumVersion() {
 		return minimumVersion;
 	}
 	
-	public Version getPreferredVersion() {
+	@Override public Version getPreferredVersion() {
 		return preferredVersion;
 	}
 
@@ -227,26 +227,26 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Machine positioning functions
 	 **************************************************************************/
 
-	public Point3d getOffset(int i) {
+	@Override public Point3d getOffset(int i) {
 		return offsets[i];
 	}
 
-	public void setOffsetX(int offsetSystemNum, double j) {
+	@Override public void setOffsetX(int offsetSystemNum, double j) {
 		offsets[offsetSystemNum].x = j;
 	}
 
-	public void setOffsetY(int offsetSystemNum, double j) {
+	@Override public void setOffsetY(int offsetSystemNum, double j) {
 		offsets[offsetSystemNum].y = j;
 	}
 
-	public void setOffsetZ(int offsetSystemNum, double j) {
+	@Override public void setOffsetZ(int offsetSystemNum, double j) {
 		offsets[offsetSystemNum].z = j;
 	}
 
 	protected final AtomicReference<Point5d> currentPosition =
 		new AtomicReference<Point5d>(null);
 	
-	public void setCurrentPosition(Point5d p) throws RetryException {
+	@Override public void setCurrentPosition(Point5d p) throws RetryException {
 		currentPosition.set(p);
 	}
 
@@ -254,7 +254,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Indicate that the currently maintained position may no longer be the machine's position,
 	 * and that the machine should be queried for its actual location.
 	 */
-	public void invalidatePosition() {
+	@Override public void invalidatePosition() {
 //		System.err.println("invalidating position.");
 		currentPosition.set(null);
 	}
@@ -270,7 +270,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	/**
 	 * @return true if the machine position is unknown
 	 */
-	public boolean positionLost() {
+	@Override public boolean positionLost() {
 		return (currentPosition.get() == null);
 	}
 	
@@ -282,7 +282,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * 
 	 * Side effects: currentPosition will be updated with the current position if the machine position is successfully polled.
 	 */
-	public Point5d getCurrentPosition(boolean forceUpdate) {
+	@Override public Point5d getCurrentPosition(boolean forceUpdate) {
 		synchronized(currentPosition)
 		{
 			// If we are lost, or an explicit update has been requested, poll the machine for it's state. 
@@ -306,7 +306,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		}
 	}
 
-	public Point5d getPosition() {
+	@Override public Point5d getPosition() {
 		return getCurrentPosition(false);
 	}
 
@@ -315,7 +315,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * @param p The point, in mm.
 	 * @throws RetryException 
 	 */
-	public void queuePoint(Point5d p) throws RetryException {
+	@Override public void queuePoint(Point5d p) throws RetryException {
 		setInternalPosition(p);
 	}
 
@@ -326,14 +326,14 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	/**
 	 * sets the feedrate in mm/minute
 	 */
-	public void setFeedrate(double feed) {
+	@Override public void setFeedrate(double feed) {
 		currentFeedrate = feed;
 	}
 
 	/**
 	 * gets the feedrate in mm/minute
 	 */
-	public double getCurrentFeedrate() {
+	@Override public double getCurrentFeedrate() {
 		return currentFeedrate;
 	}
 
@@ -393,17 +393,17 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * various homing functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void homeAxes(EnumSet<AxisId> axes, boolean positive, double feedrate) throws RetryException {
+	@Override public void homeAxes(EnumSet<AxisId> axes, boolean positive, double feedrate) throws RetryException {
 	}
 
 	/***************************************************************************
 	 * Machine interface functions
 	 **************************************************************************/
-	public MachineModel getMachine() {
+	@Override public MachineModel getMachine() {
 		return machine;
 	}
 
-	public void setMachine(MachineModel m) {
+	@Override public void setMachine(MachineModel m) {
 		machine = m;
 	}
 
@@ -411,11 +411,11 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Tool interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void requestToolChange(int toolIndex, int timeout) throws RetryException {
+	@Override public void requestToolChange(int toolIndex, int timeout) throws RetryException {
 		machine.selectTool(toolIndex);
 	}
 
-	public void selectTool(int toolIndex) throws RetryException {
+	@Override public void selectTool(int toolIndex) throws RetryException {
 		machine.selectTool(toolIndex);
 	}
 
@@ -423,7 +423,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * pause function
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void delay(long millis) throws RetryException {
+	@Override public void delay(long millis) throws RetryException {
 		// System.out.println("Delay: " + millis);
 	}
 
@@ -431,11 +431,11 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	/***************************************************************************
 	 * functions for dealing with clamps
 	 **************************************************************************/
-	public void openClamp(int index) {
+	@Override public void openClamp(int index) {
 		machine.getClamp(index).open();
 	}
 
-	public void closeClamp(int index) {
+	@Override public void closeClamp(int index) {
 		machine.getClamp(index).close();
 	}
 
@@ -443,19 +443,19 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * enabling/disabling our drivers (steppers, servos, etc.)
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void enableDrives() throws RetryException {
+	@Override public void enableDrives() throws RetryException {
 		machine.enableDrives();
 	}
 
-	public void disableDrives() throws RetryException {
+	@Override public void disableDrives() throws RetryException {
 		machine.disableDrives();
 	}
 
-	public void enableAxes(EnumSet<AxisId> axes) throws RetryException {
+	@Override public void enableAxes(EnumSet<AxisId> axes) throws RetryException {
 		// Not all drivers support this method.
 	}
 	
-	public void disableAxes(EnumSet<AxisId> axes) throws RetryException {
+	@Override public void disableAxes(EnumSet<AxisId> axes) throws RetryException {
 		// Not all drivers support this method.
 	}
 
@@ -463,7 +463,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Change our gear ratio.
 	 **************************************************************************/
 
-	public void changeGearRatio(int ratioIndex) {
+	@Override public void changeGearRatio(int ratioIndex) {
 		machine.changeGearRatio(ratioIndex);
 	}
 
@@ -474,7 +474,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	/***************************************************************************
 	 * Motor interface functions
 	 **************************************************************************/
-	public void setMotorDirection(int dir) {
+	@Override public void setMotorDirection(int dir) {
 		this.setMotorDirection(machine.currentTool().getIndex());
 	}
 
@@ -501,7 +501,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		this.setMotorSpeedPWM(pwm, machine.currentTool().getIndex());
 	}
 	
-	public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException {
+	@Override public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
@@ -539,7 +539,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 
 
 	
-	public void disableMotor(int toolhead) throws RetryException {
+	@Override public void disableMotor(int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
@@ -552,11 +552,11 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		
 	}
 
-	public double getMotorRPM() {
+	@Override public double getMotorRPM() {
 		return machine.currentTool().getMotorSpeedRPM();
 	}
 
-	public int getMotorSpeedPWM() {
+	@Override public int getMotorSpeedPWM() {
 		return machine.currentTool().getMotorSpeedReadingPWM();
 	}
 
@@ -565,10 +565,10 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	}
 
 	// TODO: These are backwards?
-	public void readToolStatus() {
+	@Override public void readToolStatus() {
 	}
 
-	public int getToolStatus() {
+	@Override public int getToolStatus() {
 		readToolStatus();
 
 		return machine.currentTool().getToolStatus();
@@ -578,23 +578,23 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	/***************************************************************************
 	 * Spindle interface functions
 	 **************************************************************************/
-	public void setSpindleDirection(int dir) {
+	@Override public void setSpindleDirection(int dir) {
 		machine.currentTool().setSpindleDirection(dir);
 	}
 
-	public void setSpindleRPM(double rpm) throws RetryException {
+	@Override public void setSpindleRPM(double rpm) throws RetryException {
 		setSpindleRPM(rpm, -1);
 	}
 
-	public void setSpindleSpeedPWM(int pwm) throws RetryException {
+	@Override public void setSpindleSpeedPWM(int pwm) throws RetryException {
 		setSpindleSpeedPWM(pwm, -1);
 	}
 
-	public void enableSpindle() throws RetryException {
+	@Override public void enableSpindle() throws RetryException {
 		enableSpindle(-1);
 	}
 
-	public void disableSpindle() throws RetryException {
+	@Override public void disableSpindle() throws RetryException {
 		disableSpindle(-1);
 	}
 	public void setSpindleRPM(double rpm, int toolhead) throws RetryException {
@@ -625,11 +625,11 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		machine.getTool(toolhead).disableSpindle();
 	}
 
-	public double getSpindleRPM() {
+	@Override public double getSpindleRPM() {
 		return machine.currentTool().getSpindleSpeedReadingRPM();
 	}
 
-	public int getSpindleSpeedPWM() {
+	@Override public int getSpindleSpeedPWM() {
 		return machine.currentTool().getSpindleSpeedReadingPWM();
 	}
 	
@@ -650,7 +650,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		machine.getTool(toolhead).setTargetTemperature(temperature);
 	}
 
-	public void readTemperature() {
+	@Override public void readTemperature() {
 
 	}
 	public void readTemperature(int toolhead) {
@@ -690,7 +690,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	}
 
 	/** relies on timing to have the 'right selected toolhead', deprecated */
-	@Deprecated
+	@Override @Deprecated
 	public void readPlatformTemperature() {
 		this.readPlatformTemperature(-1);
 	}
@@ -708,7 +708,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		return this.getPlatformTemperature(-1);
 	}
 
-	public double getPlatformTemperature(int toolhead) {
+	@Override public double getPlatformTemperature(int toolhead) {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
@@ -719,22 +719,22 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	/***************************************************************************
 	 * Flood Coolant interface functions
 	 **************************************************************************/
-	public void enableFloodCoolant() {
+	@Override public void enableFloodCoolant() {
 		machine.currentTool().enableFloodCoolant();
 	}
 
-	public void disableFloodCoolant() {
+	@Override public void disableFloodCoolant() {
 		machine.currentTool().disableFloodCoolant();
 	}
 
 	/***************************************************************************
 	 * Mist Coolant interface functions
 	 **************************************************************************/
-	public void enableMistCoolant() {
+	@Override public void enableMistCoolant() {
 		machine.currentTool().enableMistCoolant();
 	}
 
-	public void disableMistCoolant() {
+	@Override public void disableMistCoolant() {
 		machine.currentTool().disableMistCoolant();
 	}
 
@@ -742,7 +742,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Fan interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void enableFan() throws RetryException {
+	@Override public void enableFan() throws RetryException {
 		this.enableFan(machine.currentTool().getIndex());		
 	}
 	@Override
@@ -753,7 +753,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	}
 
 
-	public void disableFan() throws RetryException {
+	@Override public void disableFan() throws RetryException {
 		this.disableFan(machine.currentTool().getIndex());
 	}
 
@@ -765,7 +765,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	}
 	
 	
-	public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException {
+	@Override public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException {
 		this.setAutomatedBuildPlatformRunning(state, machine.currentTool().getIndex());
 	}
 	@Override
@@ -777,7 +777,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	}
 
 	
-	public boolean hasAutomatedBuildPlatform()
+	@Override public boolean hasAutomatedBuildPlatform()
 	{
 		return hasAutomatedBuildPlatform(-1);
 	}
@@ -793,11 +793,11 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	 * Valve interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void openValve() throws RetryException {
+	@Override public void openValve() throws RetryException {
 		openValve(-1);
 	}
 
-	public void closeValve() throws RetryException {
+	@Override public void closeValve() throws RetryException {
 		closeValve(-1);
 	}
 	public void openValve(int toolhead) throws RetryException {
@@ -810,7 +810,7 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 		machine.getTool(toolhead).closeValve();
 	}
 
-	public void setStepperVoltage(int stepperId, int referenceValue) throws RetryException
+	@Override public void setStepperVoltage(int stepperId, int referenceValue) throws RetryException
 	{
 		Base.logger.fine("BaseImplementation setStepperVoltage called.");
 	}
@@ -820,20 +820,20 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 //		Base.logger.fine("BaseImplementation setStepperVoltage called.");
 //	}
 	
-	public int getStepperVoltage(int stepperId)
+	@Override public int getStepperVoltage(int stepperId)
 	{
 		Base.logger.fine("BaseImplementation getStepperVoltage called.");
 		return -1;
 	}
 
 	
-	public void setLedStrip(Color color, int effectId) throws RetryException 
+	@Override public void setLedStrip(Color color, int effectId) throws RetryException 
 	{
 		Base.logger.fine("BaseImplementation setLedStrip called.");
 	}
 	
 	
-	public void sendBeep(int frequencyHz, int durationMs,int effect) throws RetryException
+	@Override public void sendBeep(int frequencyHz, int durationMs,int effect) throws RetryException
 	{
 		Base.logger.fine("BaseImplementation sendBeep called.");
 	}
@@ -841,76 +841,76 @@ public class DriverBaseImplementation implements Driver, DriverQueryInterface{
 	/***************************************************************************
 	 * Collet interface functions
 	 **************************************************************************/
-	public void openCollet() {
+	@Override public void openCollet() {
 		machine.currentTool().openCollet();
 	}
 
-	public void closeCollet() {
+	@Override public void closeCollet() {
 		machine.currentTool().closeCollet();
 	}
 
 	/***************************************************************************
 	 * Pause/unpause functionality for asynchronous devices
 	 **************************************************************************/
-	public void pause() {
+	@Override public void pause() {
 		// No implementation needed for synchronous machines.
 	}
 
-	public void unpause() {
+	@Override public void unpause() {
 		// No implementation needed for synchronous machines.
 	}
 
 	/***************************************************************************
 	 * Stop and system state reset
 	 **************************************************************************/
-	public void stop(boolean abort) {
+	@Override public void stop(boolean abort) {
 		// No implementation needed for synchronous machines.
 		Base.logger.info("Machine stop called.");
 	}
 
-	public void reset() {
+	@Override public void reset() {
 		// No implementation needed for synchronous machines.
 		Base.logger.info("Machine reset called.");
 	}
 
-	public String getDriverName() {
+	@Override public String getDriverName() {
 		return null;
 	}
 	
-	public boolean heartbeat() {
+	@Override public boolean heartbeat() {
 		return true;
 	}
 	
-	public double getChamberTemperature() {
+	@Override public double getChamberTemperature() {
 		return 0;
 	}
 
-	public void readChamberTemperature() {
+	@Override public void readChamberTemperature() {
 	}
 
-	public void setChamberTemperature(double temperature) {
+	@Override public void setChamberTemperature(double temperature) {
 	}
 
-	public double getPlatformTemperatureSetting() {
+	@Override public double getPlatformTemperatureSetting() {
 		return machine.currentTool().getPlatformTargetTemperature();
 	}
 
-	public double getTemperatureSetting() {
+	@Override public double getTemperatureSetting() {
 		return machine.currentTool().getTargetTemperature();
 	}
 
-	public void storeHomePositions(EnumSet<AxisId> axes) throws RetryException {
+	@Override public void storeHomePositions(EnumSet<AxisId> axes) throws RetryException {
 	}
 
-	public void recallHomePositions(EnumSet<AxisId> axes) throws RetryException {
+	@Override public void recallHomePositions(EnumSet<AxisId> axes) throws RetryException {
 	}
 
-	public boolean hasSoftStop() {
+	@Override public boolean hasSoftStop() {
 
 		return hasSoftStop;
 	}
 
-	public boolean hasEmergencyStop() {
+	@Override public boolean hasEmergencyStop() {
 		return hasEmergencyStop;
 	}
 
