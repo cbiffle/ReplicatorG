@@ -18,7 +18,7 @@ import replicatorg.app.util.serial.SerialFifoEventListener;
  * @author phooky
  *
  */
-public class SerialDriver extends DriverBaseImplementation implements UsesSerial {
+public abstract class SerialDriver extends DriverBaseImplementation implements UsesSerial {
 
 	protected Serial serial;
 	
