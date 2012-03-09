@@ -170,13 +170,11 @@ public class Makerbot4GAlternateDriver extends Makerbot4GDriver {
 	 * by @minutes. If no axis is enabled and hijacked, returns an 'empty' Point5d with no motion.
 	 */
 	private Point5d pointsFromHijackedAxes(ToolModel curTool, double minutes) {
-		int relative = 0;
 		Point5d steps = new Point5d();
 		Base.logger.finer("modify hijacked axes");
 		
 		for (AxisId axis : getHijackedAxes(machine.currentTool())) {
 			Base.logger.finer("modify hijacked axes doing " + axis.toString() );
-			relative |= 1 << axis.getIndex();
 			double extruderSteps = 0;
 			
 			if (curTool.isMotorEnabled()) {
