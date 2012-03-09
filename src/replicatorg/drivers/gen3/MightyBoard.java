@@ -879,7 +879,7 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 		byte eepromIndicator[] = new byte[2];
 		eepromIndicator[0] = MightyBoardEEPROM.EEPROM_CHECK_LOW;
 		eepromIndicator[1] = MightyBoardEEPROM.EEPROM_CHECK_HIGH;
-		writeToToolEEPROM(0,eepromIndicator);
+		writeToToolEEPROM(0, eepromIndicator, machine.currentTool().getIndex());
 
 		writeToEEPROM(MightyBoardEEPROM.ECThermistorOffsets.beta(which),intToLE((int)beta));
 		writeToEEPROM(MightyBoardEEPROM.ECThermistorOffsets.r0(which),intToLE((int)r0));
@@ -939,7 +939,7 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 		efdat |= features.hbpChannel << 4;
 		efdat |= features.abpChannel << 6;
 		//System.err.println("Writing to EF: "+Integer.toHexString(efdat));
-		writeToToolEEPROM(ToolheadEEPROM.FEATURES, intToLE(efdat,2));
+		writeToToolEEPROM(ToolheadEEPROM.FEATURES, intToLE(efdat,2), machine.currentTool().getIndex());
 	}
 
 	@Override
@@ -1018,13 +1018,6 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 		return false;
 	}
 
-
-	@Override
-	@Deprecated
-	protected void writeToToolEEPROM(int offset, byte[] data) {
-		writeToToolEEPROM(offset, data, machine.currentTool().getIndex());
-	}
-	
 
 	@Override
 	protected void writeToToolEEPROM(int offset, byte[] data, int toolIndex) {
@@ -1182,12 +1175,6 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 		return val;
 	}
 
-	@Override
-	@Deprecated
-	protected int read16FromToolEEPROM(int offset, int defaultValue) {
-		return read16FromToolEEPROM(offset, defaultValue, machine.currentTool().getIndex());
-	}
-	
 	@Override
 	protected int read16FromToolEEPROM(int offset, int defaultValue, int toolIndex) {
 		byte r[] = readFromToolEEPROM(offset, 2, toolIndex);
