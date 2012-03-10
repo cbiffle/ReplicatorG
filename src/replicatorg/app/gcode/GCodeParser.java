@@ -176,7 +176,7 @@ public class GCodeParser {
 	double feedrate = 0.0;
 
 	// current selected tool
-	protected int tool = ToolheadAlias.SINGLE.number;
+	private int tool = ToolheadAlias.SINGLE.number;
 
 	// unit variables.
 	public static int UNITS_MM = 0;
@@ -283,8 +283,8 @@ public class GCodeParser {
 		// you may wish to avoid using M6.
 		if (gcode.hasCode('T') && driver instanceof MultiTool && ((MultiTool)driver).supportsSimultaneousTools())
 		{
-			commands.add(new replicatorg.drivers.commands.SelectTool((int) gcode.getCodeValue('T')));
 			tool = (int) gcode.getCodeValue('T');
+			commands.add(new replicatorg.drivers.commands.SelectTool(tool));
 		}
 		
 		// handle unrecognised GCode
@@ -317,21 +317,17 @@ public class GCodeParser {
 			break;
 		// spindle on, CW
 		case M3:
-			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(
-					DriverCommand.AxialDirection.CLOCKWISE,
-					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
-			commands.add(new replicatorg.drivers.commands.EnableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(DriverCommand.AxialDirection.CLOCKWISE, tool));
+			commands.add(new replicatorg.drivers.commands.EnableSpindle(tool));
 			break;
 		// spindle on, CCW
 		case M4:
-			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(
-					DriverCommand.AxialDirection.COUNTERCLOCKWISE,
-					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
-			commands.add(new replicatorg.drivers.commands.EnableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(DriverCommand.AxialDirection.COUNTERCLOCKWISE, tool));
+			commands.add(new replicatorg.drivers.commands.EnableSpindle(tool));
 			break;
 		// spindle off
 		case M5:
-			commands.add(new replicatorg.drivers.commands.DisableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.DisableSpindle(tool));
 			break;
 		// tool change.
 		case M6:
@@ -340,7 +336,7 @@ public class GCodeParser {
 				timeout = (int)gcode.getCodeValue('P');
 			}
 			if (gcode.hasCode('T')) {
-				commands.add(new replicatorg.drivers.commands.RequestToolChange((int) gcode.getCodeValue('T'), timeout));
+				commands.add(new replicatorg.drivers.commands.RequestToolChange(gcode.getCodeValueInt('T'), timeout));
 			}
 			else {
 				throw new GCodeException("The T parameter is required for tool changes. (M6)");
@@ -379,16 +375,16 @@ public class GCodeParser {
 		case M13:
 			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(
 					DriverCommand.AxialDirection.CLOCKWISE,
-					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
-			commands.add(new replicatorg.drivers.commands.EnableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+					tool));
+			commands.add(new replicatorg.drivers.commands.EnableSpindle(tool));
 			commands.add(new replicatorg.drivers.commands.EnableFloodCoolant());
 			break;
 		// spindle CCW and coolant A on
 		case M14:
 			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(
 					DriverCommand.AxialDirection.COUNTERCLOCKWISE,
-					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
-			commands.add(new replicatorg.drivers.commands.EnableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+					tool));
+			commands.add(new replicatorg.drivers.commands.EnableSpindle(tool));
 			commands.add(new replicatorg.drivers.commands.EnableFloodCoolant());
 			break;
 		// enable drives
@@ -446,11 +442,7 @@ public class GCodeParser {
 			break;
 		// read spindle speed
 		case M50:
-			if (gcode.hasCode('T')) {
-				driver.getSpindleRPM((int) gcode.getCodeValue('T'));
-			} else {
-				driver.getSpindleRPM(driver.getCurrentToolIndex());
-			}
+			driver.getSpindleRPM(tool);
 			break;
 			// turn extruder on, forward
 		case M70:
@@ -480,29 +472,25 @@ public class GCodeParser {
 			// Manually sets the percent complete info on the bot.
 			commands.add(new replicatorg.drivers.commands.SetBuildPercent(gcode.getCodeValue('P'), gcode.getComment() ) );
 			break;			
-		case M101: {
-			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
-			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.CLOCKWISE,	toolIndex));
-			commands.add(new replicatorg.drivers.commands.EnableExtruderMotor(toolIndex));
+		case M101:
+			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.CLOCKWISE,	tool));
+			commands.add(new replicatorg.drivers.commands.EnableExtruderMotor(tool));
 			break;
-		}
 		// turn extruder on, reverse
-		case M102: {
-			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
-			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.COUNTERCLOCKWISE, toolIndex));
-			commands.add(new replicatorg.drivers.commands.EnableExtruderMotor(toolIndex));
+		case M102:
+			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.COUNTERCLOCKWISE, tool));
+			commands.add(new replicatorg.drivers.commands.EnableExtruderMotor(tool));
 			break;
-		}
 		// turn extruder off
 		case M103:
-			commands.add(new replicatorg.drivers.commands.DisableMotor(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.DisableMotor(tool));
 			break;
 		// custom code for temperature control
 		case M104:
 			if (gcode.hasCode('S')) {
 				commands.add(new replicatorg.drivers.commands.SetTemperature(
 						gcode.getCodeValue('S'),
-						gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+						tool));
 			}
 			break;
 		// custom code for temperature reading
@@ -512,39 +500,31 @@ public class GCodeParser {
 			commands.add(new replicatorg.drivers.commands.ReadTemperature());
 			break;
 		// turn AutomatedBuildPlatform on
-		case M106: {
-			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
-			if(driver.hasAutomatedBuildPlatform(toolIndex))
-				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(true, toolIndex));
+		case M106:
+			if(driver.hasAutomatedBuildPlatform(tool))
+				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(true, tool));
 			else
-				commands.add(new replicatorg.drivers.commands.EnableFan(toolIndex));
+				commands.add(new replicatorg.drivers.commands.EnableFan(tool));
 			break;
-		}
 		// turn AutomatedBuildPlatform off
-		case M107: {
-			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
-			if(driver.hasAutomatedBuildPlatform(toolIndex))
-				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(false, toolIndex));
+		case M107:
+			if(driver.hasAutomatedBuildPlatform(tool))
+				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(false, tool));
 			else
-				commands.add(new replicatorg.drivers.commands.DisableFan(toolIndex));
+				commands.add(new replicatorg.drivers.commands.DisableFan(tool));
 			break;
-		}
 		// set max extruder speed, RPM
-		case M108: {
-			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
+		case M108:
 			if (gcode.hasCode('S'))
-				commands.add(new replicatorg.drivers.commands.SetMotorSpeedPWM((int)gcode.getCodeValue('S'), toolIndex));
+				commands.add(new replicatorg.drivers.commands.SetMotorSpeedPWM((int)gcode.getCodeValue('S'), tool));
 			else if (gcode.hasCode('R'))
-				commands.add(new replicatorg.drivers.commands.SetMotorSpeedRPM(gcode.getCodeValue('R'), toolIndex));
+				commands.add(new replicatorg.drivers.commands.SetMotorSpeedRPM(gcode.getCodeValue('R'), tool));
 			break;
-		}
 		// set build platform temperature
 		case M109:
 		case M140: // skeinforge chamber code for HBP
 			if (gcode.hasCode('S'))
-				commands.add(new replicatorg.drivers.commands.SetPlatformTemperature(
-						gcode.getCodeValue('S'),
-						gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+				commands.add(new replicatorg.drivers.commands.SetPlatformTemperature(gcode.getCodeValue('S'), tool));
 			break;
 		// set build chamber temperature
 		case M110:
@@ -552,11 +532,11 @@ public class GCodeParser {
 			break;
 		// valve open
 		case M126:
-			commands.add(new replicatorg.drivers.commands.OpenValve(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.OpenValve(tool));
 			break;
 		// valve close
 		case M127:
-			commands.add(new replicatorg.drivers.commands.CloseValve(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.CloseValve(tool));
 			break;
 		// where are we?
 		case M128:
