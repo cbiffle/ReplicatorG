@@ -324,32 +324,24 @@ public interface Driver {
 	 * Temperature interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	@Deprecated public void setTemperature(double temperature) throws RetryException;
 	public void setTemperature(double temperature, int toolIndex) throws RetryException;
 	
-	@Deprecated public void readTemperature();
 	public void readTemperature(int toolhead);
 	
-	@Deprecated public double getTemperature();
 	public double getTemperature(int toolhead);
 	
-	@Deprecated public double getTemperatureSetting();
 	public double getTemperatureSetting(int toolhead);
 	
 	/***************************************************************************
 	 * Platform Temperature interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	@Deprecated public void setPlatformTemperature(double temperature) throws RetryException;
 	public void setPlatformTemperature(double temperature, int toolIndex) throws RetryException;
 	
-	@Deprecated public void readPlatformTemperature();
 	public void readPlatformTemperature(int toolhead);
 	
-	@Deprecated public double getPlatformTemperature();
 	public double getPlatformTemperature(int toolhead);
 
-	@Deprecated public double getPlatformTemperatureSetting();
 	public double getPlatformTemperatureSetting(int toolhead);
 
 	/***************************************************************************

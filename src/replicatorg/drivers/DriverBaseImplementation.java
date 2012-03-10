@@ -611,12 +611,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	/***************************************************************************
 	 * Temperature interface functions
 	 * @throws RetryException 
-	 * @deprecated
 	 **************************************************************************/
-	@Deprecated @Override
-	public void setTemperature(double temperature) throws RetryException {
-		machine.currentTool().setTargetTemperature(temperature);
-	}
 
 	@Override
 	public void setTemperature(double temperature, int toolhead) throws RetryException {
@@ -626,21 +621,10 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine.getTool(toolhead).setTargetTemperature(temperature);
 	}
 
-	@Deprecated @Override public void readTemperature() {
-		readTemperature(-1);
-	}
-	
 	@Override public void readTemperature(int toolhead) {
 
 	}
 
-	/** relies on timing to have the 'correct selected toolhead', deprecated */
-	@Override
-	@Deprecated
-	public double getTemperature() {
-		return getTemperature(-1); 
-	}
-	
 	@Override
 	public double getTemperature(int toolhead) {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
@@ -652,13 +636,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	/***************************************************************************
 	 * Platform Temperature interface functions
 	 * @throws RetryException 
-	 * @deprecated
 	 **************************************************************************/
-	@Deprecated @Override
-	public void setPlatformTemperature(double temperature) throws RetryException {
-		this.setPlatformTemperature(temperature, -1);
-	}
-	
 	@Override
 	public void setPlatformTemperature(double temperature, int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
@@ -667,23 +645,10 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine.getTool(toolhead).setPlatformTargetTemperature(temperature);
 	}
 
-	/** relies on timing to have the 'right selected toolhead', deprecated */
-	@Override @Deprecated
-	public void readPlatformTemperature() {
-		this.readPlatformTemperature(-1);
-	}
-
 	@Override public void readPlatformTemperature(int toolhead) {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 	
-	}
-
-	/** relies on timing to have the 'right selected toolhead', deprecated */
-	@Override 
-	@Deprecated
-	public double getPlatformTemperature() {
-		return this.getPlatformTemperature(-1);
 	}
 
 	@Override public double getPlatformTemperature(int toolhead) {
@@ -862,19 +827,11 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	@Override public void setChamberTemperature(double temperature) {
 	}
 
-	@Deprecated @Override public double getPlatformTemperatureSetting() {
-		return getPlatformTemperatureSetting(-1);
-	}
-	
 	@Override public double getPlatformTemperatureSetting(int toolhead) {
 		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
 		return machine.getTool(toolhead).getPlatformTargetTemperature();
 	}
 
-	@Deprecated @Override public double getTemperatureSetting() {
-		return getTemperatureSetting(-1);
-	}
-	
 	@Override public double getTemperatureSetting(int toolhead) {
 		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
 		return machine.getTool(toolhead).getTargetTemperature();

@@ -32,9 +32,6 @@ public class SetTemperature implements DriverCommand {
 	
 	@Override
 	public void run(Driver driver) throws RetryException {
-		if (this.toolhead == -1)
-			driver.setTemperature(temperature); /// do problematic 'get current toolhead
-		else
-			driver.setTemperature(temperature, toolhead);
+		driver.setTemperature(temperature, toolhead);
 	}
 }

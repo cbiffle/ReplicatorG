@@ -31,9 +31,6 @@ public class SetPlatformTemperature implements DriverCommand {
 
 	@Override
 	public void run(Driver driver) throws RetryException {
-		if(this.toolIndex == -1)
-			driver.setPlatformTemperature(temperature);
-		else
-			driver.setPlatformTemperature(temperature, toolIndex);
+		driver.setPlatformTemperature(temperature, toolIndex);
 	}	
 }
