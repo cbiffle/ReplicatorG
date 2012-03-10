@@ -845,7 +845,7 @@ public class ExtruderPanel extends JPanel{
 			if (tool.getMotorStepperAxisName() != "") {
 				machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(AxialDirection.CLOCKWISE,toolhead));
 				// Reverted to one single command for RepRap5D driver
-				if (machine.getDriver().getDriverName().equals("RepRap5D")) {
+				if (machine.getDriverQueryInterface().getDriverName().equals("RepRap5D")) {
 					machine.runCommand(new replicatorg.drivers.commands.EnableExtruderMotor(extrudeTime*1000,toolhead));
 				} else {
 					// See Note (***) Below:
@@ -860,7 +860,7 @@ public class ExtruderPanel extends JPanel{
 			if (tool.getMotorStepperAxisName() != "") {
 				machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(AxialDirection.COUNTERCLOCKWISE,toolhead));
 				// Reverted to one single command for RepRap5D driver
-				if (machine.getDriver().getDriverName().equals("RepRap5D")) {
+				if (machine.getDriverQueryInterface().getDriverName().equals("RepRap5D")) {
 					machine.runCommand(new replicatorg.drivers.commands.EnableExtruderMotor(extrudeTime*1000,toolhead));
 				} else {
 					// See Note (***) Below:

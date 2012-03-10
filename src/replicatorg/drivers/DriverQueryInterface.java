@@ -13,6 +13,10 @@ import replicatorg.util.Point5d;
 public interface DriverQueryInterface {
 	public int getCurrentToolIndex();
 	
+	public String getDriverName();
+	public boolean hasEmergencyStop();
+	public boolean hasSoftStop();
+	
 	public Point3d getOffset(int i);
 	
 	public Point5d getMaximumFeedrates();
