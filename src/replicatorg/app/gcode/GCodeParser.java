@@ -438,7 +438,11 @@ public class GCodeParser {
 			break;
 		// read spindle speed
 		case M50:
-			driver.getSpindleRPM();
+			if (gcode.hasCode('T')) {
+				driver.getSpindleRPM((int) gcode.getCodeValue('P'));
+			} else {
+				driver.getSpindleRPM(driver.getCurrentToolIndex());
+			}
 			break;
 			// turn extruder on, forward
 		case M70:
@@ -493,19 +497,23 @@ public class GCodeParser {
 			commands.add(new replicatorg.drivers.commands.ReadTemperature());
 			break;
 		// turn AutomatedBuildPlatform on
-		case M106:
-			if(driver.hasAutomatedBuildPlatform())
+		case M106: {
+			int toolIndex = gcode.hasCode('T') ? (int) gcode.getCodeValue('T') : driver.getCurrentToolIndex();
+			if(driver.hasAutomatedBuildPlatform(toolIndex))
 				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(true));
 			else
 				commands.add(new replicatorg.drivers.commands.EnableFan());
 			break;
+		}
 		// turn AutomatedBuildPlatform off
-		case M107:
-			if(driver.hasAutomatedBuildPlatform())
+		case M107: {
+			int toolIndex = gcode.hasCode('T') ? (int) gcode.getCodeValue('T') : driver.getCurrentToolIndex();
+			if(driver.hasAutomatedBuildPlatform(toolIndex))
 				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(false));
 			else
 				commands.add(new replicatorg.drivers.commands.DisableFan());
 			break;
+		}
 		// set max extruder speed, RPM
 		case M108:
 			if (gcode.hasCode('S'))

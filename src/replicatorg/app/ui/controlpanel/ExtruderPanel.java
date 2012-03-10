@@ -274,7 +274,7 @@ public class ExtruderPanel extends JPanel{
 						}
 					}
 				}, "handleTextField", "motor-speed-pwm", 5, Base.getLocalFormat());
-				field.setValue(machine.getDriverQueryInterface().getMotorSpeedPWM());
+				field.setValue(machine.getDriverQueryInterface().getMotorSpeedPWM(tool.getIndex()));
 				panel.add(label);
 				panel.add(field,"wrap");
 			}

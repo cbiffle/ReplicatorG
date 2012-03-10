@@ -398,6 +398,10 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	@Override public void selectTool(int toolIndex) throws RetryException {
 		machine.selectTool(toolIndex);
 	}
+	
+	@Override public int getCurrentToolIndex() {
+		return machine.currentTool().getIndex();
+	}
 
 	/***************************************************************************
 	 * pause function
@@ -797,12 +801,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	}
 
 	
-	@Override public boolean hasAutomatedBuildPlatform()
-	{
-		return hasAutomatedBuildPlatform(-1);
-	}
-
-	private boolean hasAutomatedBuildPlatform(int toolhead)
+	@Override public boolean hasAutomatedBuildPlatform(int toolhead)
 	{
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
