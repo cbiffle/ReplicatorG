@@ -558,19 +558,10 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		return machine.currentTool().getMotorSteps();
 	}
 
-	// TODO: These are backwards?
-	@Deprecated @Override public void readToolStatus() {
-		readToolStatus(-1);
-	}
-	
 	@Override public void readToolStatus(int toolhead) {
 		
 	}
 	
-	@Deprecated @Override public int getToolStatus() {
-		return getToolStatus(-1);
-	}
-
 	@Override public int getToolStatus(int toolhead) {
 		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
 		readToolStatus(toolhead);

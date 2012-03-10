@@ -263,10 +263,8 @@ public interface Driver {
 	 */
 	public void changeGearRatio(int ratioIndex);
 	
-	@Deprecated public void readToolStatus();
 	public void readToolStatus(int toolhead);
 	
-	@Deprecated public int getToolStatus();
 	public int getToolStatus(int toolhead);
 	
 
