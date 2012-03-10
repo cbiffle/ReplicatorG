@@ -283,19 +283,19 @@ public class GCodeParser {
 		// you may wish to avoid using M6.
 		if (gcode.hasCode('T') && driver instanceof MultiTool && ((MultiTool)driver).supportsSimultaneousTools())
 		{
-			tool = (int) gcode.getCodeValue('T');
+			tool = gcode.getCodeValueInt('T');
 			commands.add(new replicatorg.drivers.commands.SelectTool(tool));
 		}
 		
 		// handle unrecognised GCode
-		if(GCodeEnumeration.getGCode("M", (int)gcode.getCodeValue('M')) == null)
+		if(GCodeEnumeration.getGCode("M", gcode.getCodeValueInt('M')) == null)
 		{
-			String message = "Unrecognized MCode! M" + (int)gcode.getCodeValue('M');
+			String message = "Unrecognized MCode! M" + gcode.getCodeValueInt('M');
 			Base.logger.log(Level.SEVERE, message);
 			throw new GCodeException(message);
 		}
 		
-		switch (GCodeEnumeration.getGCode("M", (int)gcode.getCodeValue('M'))) {
+		switch (GCodeEnumeration.getGCode("M", gcode.getCodeValueInt('M'))) {
 		case M0:
 			// M0 == unconditional halt
 			commands.add(new replicatorg.drivers.commands.WaitUntilBufferEmpty());
@@ -331,10 +331,7 @@ public class GCodeParser {
 			break;
 		// tool change.
 		case M6:
-			int timeout = 65535;
-			if (gcode.hasCode('P')) {
-				timeout = (int)gcode.getCodeValue('P');
-			}
+			int timeout = gcode.getCodeValueInt('P', 65535);
 			if (gcode.hasCode('T')) {
 				commands.add(new replicatorg.drivers.commands.RequestToolChange(gcode.getCodeValueInt('T'), timeout));
 			}
@@ -358,7 +355,7 @@ public class GCodeParser {
 		// close clamp
 		case M10:
 			if (gcode.hasCode('Q'))
-				commands.add(new replicatorg.drivers.commands.CloseClamp((int) gcode.getCodeValue('Q')));
+				commands.add(new replicatorg.drivers.commands.CloseClamp(gcode.getCodeValueInt('Q')));
 			else
 				throw new GCodeException(
 						"The Q parameter is required for clamp operations. (M10)");
@@ -366,7 +363,7 @@ public class GCodeParser {
 		// open clamp
 		case M11:
 			if (gcode.hasCode('Q'))
-				commands.add(new replicatorg.drivers.commands.OpenClamp((int) gcode.getCodeValue('Q')));
+				commands.add(new replicatorg.drivers.commands.OpenClamp(gcode.getCodeValueInt('Q')));
 			else
 				throw new GCodeException(
 						"The Q parameter is required for clamp operations. (M11)");
@@ -448,29 +445,29 @@ public class GCodeParser {
 		case M70:
 			// print message			
 			if (gcode.hasCode('P'))
-				commands.add(new replicatorg.drivers.commands.DisplayMessage(gcode.getCodeValue('P'),gcode.getComment(), false));
+				commands.add(new replicatorg.drivers.commands.DisplayMessage(gcode.getCodeValue('P'), gcode.getComment(), false));
 			else
-				commands.add(new replicatorg.drivers.commands.DisplayMessage(0,gcode.getComment(), false));
+				commands.add(new replicatorg.drivers.commands.DisplayMessage(0, gcode.getComment(), false));
 			
 			break;
 		case M71:
 			// User-clearable pause
 			// First send message, if any...
 			if (gcode.getComment().length() > 0) {
-				commands.add(new replicatorg.drivers.commands.DisplayMessage(0,gcode.getComment(), true));
+				commands.add(new replicatorg.drivers.commands.DisplayMessage(0, gcode.getComment(), true));
 			} else {
-				commands.add(new replicatorg.drivers.commands.DisplayMessage(0,"Paused, press button\nto continue", true));
+				commands.add(new replicatorg.drivers.commands.DisplayMessage(0, "Paused, press button\nto continue", true));
 			}
 			// ...then send user pause command. 
 			//commands.add(new replicatorg.drivers.commands.UserPause(gcode.getCodeValue('P'),true,0xff));
 			break;
 		case M72:
 			// Play a tone or song as stored on the machine
-			commands.add(new replicatorg.drivers.commands.PlaySong(gcode.getCodeValue('P')) );
+			commands.add(new replicatorg.drivers.commands.PlaySong(gcode.getCodeValue('P', -1)) );
 			break;
 		case M73:
 			// Manually sets the percent complete info on the bot.
-			commands.add(new replicatorg.drivers.commands.SetBuildPercent(gcode.getCodeValue('P'), gcode.getComment() ) );
+			commands.add(new replicatorg.drivers.commands.SetBuildPercent(gcode.getCodeValue('P', -1), gcode.getComment() ) );
 			break;			
 		case M101:
 			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.CLOCKWISE,	tool));
@@ -488,9 +485,7 @@ public class GCodeParser {
 		// custom code for temperature control
 		case M104:
 			if (gcode.hasCode('S')) {
-				commands.add(new replicatorg.drivers.commands.SetTemperature(
-						gcode.getCodeValue('S'),
-						tool));
+				commands.add(new replicatorg.drivers.commands.SetTemperature(gcode.getCodeValue('S'), tool));
 			}
 			break;
 		// custom code for temperature reading
@@ -516,7 +511,7 @@ public class GCodeParser {
 		// set max extruder speed, RPM
 		case M108:
 			if (gcode.hasCode('S'))
-				commands.add(new replicatorg.drivers.commands.SetMotorSpeedPWM((int)gcode.getCodeValue('S'), tool));
+				commands.add(new replicatorg.drivers.commands.SetMotorSpeedPWM(gcode.getCodeValueInt('S'), tool));
 			else if (gcode.hasCode('R'))
 				commands.add(new replicatorg.drivers.commands.SetMotorSpeedRPM(gcode.getCodeValue('R'), tool));
 			break;
@@ -528,7 +523,7 @@ public class GCodeParser {
 			break;
 		// set build chamber temperature
 		case M110:
-			commands.add(new replicatorg.drivers.commands.SetChamberTemperature(gcode.getCodeValue('S')));
+			commands.add(new replicatorg.drivers.commands.SetChamberTemperature(gcode.getCodeValue('S', -1)));
 			break;
 		// valve open
 		case M126:
@@ -596,7 +591,7 @@ public class GCodeParser {
 			commands.add(new replicatorg.drivers.commands.DataCaptureNote(gcode.getComment()));
 			break;
 		default:
-			throw new GCodeException("Unknown M code: M" + (int) gcode.getCodeValue('M'));
+			throw new GCodeException("Unknown M code: M" + gcode.getCodeValueInt('M'));
 		}
 	}
 
@@ -609,24 +604,24 @@ public class GCodeParser {
 		Point5d pos = driver.getCurrentPosition(false);
 
 		// initialize our points, etc.
-		double iVal = convertToMM(gcode.getCodeValue('I'), units); // / X offset
+		double iVal = convertToMM(gcode.getCodeValue('I', -1), units); // / X offset
 																// for arcs
-		double jVal = convertToMM(gcode.getCodeValue('J'), units); // / Y offset
-																// for arcs
-		@SuppressWarnings("unused")
-		double kVal = convertToMM(gcode.getCodeValue('K'), units); // / Z offset
+		double jVal = convertToMM(gcode.getCodeValue('J', -1), units); // / Y offset
 																// for arcs
 		@SuppressWarnings("unused")
-		double qVal = convertToMM(gcode.getCodeValue('Q'), units); // / feed
+		double kVal = convertToMM(gcode.getCodeValue('K', -1), units); // / Z offset
+																// for arcs
+		@SuppressWarnings("unused")
+		double qVal = convertToMM(gcode.getCodeValue('Q', -1), units); // / feed
 																// increment for
 																// G83
-		double xVal = convertToMM(gcode.getCodeValue('X'), units); // / X units
-		double yVal = convertToMM(gcode.getCodeValue('Y'), units); // / Y units
-		double zVal = convertToMM(gcode.getCodeValue('Z'), units); // / Z units
-		double aVal = convertToMM(gcode.getCodeValue('A'), units); // / A units
-		double bVal = convertToMM(gcode.getCodeValue('B'), units); // / B units
+		double xVal = convertToMM(gcode.getCodeValue('X', -1), units); // / X units
+		double yVal = convertToMM(gcode.getCodeValue('Y', -1), units); // / Y units
+		double zVal = convertToMM(gcode.getCodeValue('Z', -1), units); // / Z units
+		double aVal = convertToMM(gcode.getCodeValue('A', -1), units); // / A units
+		double bVal = convertToMM(gcode.getCodeValue('B', -1), units); // / B units
 		// Note: The E axis is treated internally as the A or B axis
-		double eVal = convertToMM(gcode.getCodeValue('E'), units); // / E units
+		double eVal = convertToMM(gcode.getCodeValue('E', -1), units); // / E units
 
 		// adjust for our offsets
 		xVal += currentOffset.x;
@@ -682,12 +677,12 @@ public class GCodeParser {
 		}
 		
 
-		GCodeEnumeration codeEnum = GCodeEnumeration.getGCode("G", (int)gcode.getCodeValue('G'));
+		GCodeEnumeration codeEnum = GCodeEnumeration.getGCode("G", gcode.getCodeValueInt('G'));
 
 		// handle unrecognised GCode
 		if(codeEnum == null)
 		{
-			String message = "Unrecognized GCode! G" + (int)gcode.getCodeValue('G');
+			String message = "Unrecognized GCode! G" + gcode.getCodeValueInt('G');
 			Base.logger.log(Level.SEVERE, message);
 			throw new GCodeException(message);
 		}
@@ -756,11 +751,11 @@ public class GCodeParser {
 			break;
 		// dwell
 		case G4:
-			commands.add(new replicatorg.drivers.commands.Delay((long)gcode.getCodeValue('P')));
+			commands.add(new replicatorg.drivers.commands.Delay((long)gcode.getCodeValue('P', -1)));
 			break;
 		case G10:
 			if (gcode.hasCode('P')) {
-				int offsetSystemNum = ((int)gcode.getCodeValue('P'));
+				int offsetSystemNum = (gcode.getCodeValueInt('P'));
 				if (offsetSystemNum >= 1 && offsetSystemNum <= 6) {
 					if (gcode.hasCode('X')) 
 						commands.add(new replicatorg.drivers.commands.SetAxisOffset(AxisId.X, offsetSystemNum, gcode.getCodeValue('X')));
@@ -891,27 +886,25 @@ public class GCodeParser {
 //			break;
 		// spindle speed rate
 		case G97:
-			commands.add(new replicatorg.drivers.commands.SetSpindleRPM(
-					gcode.getCodeValue('S'),
-					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.SetSpindleRPM(gcode.getCodeValue('S', -1), gcode.getCodeValueInt('T', tool)));
 			break;	
 		case G130:
 			/// TODO:  axis ids should not be hard coded
 			if (gcode.hasCode('X'))
-				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(0, (int)gcode.getCodeValue('X')));
+				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(0, gcode.getCodeValueInt('X')));
 			if (gcode.hasCode('Y'))
-				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(1, (int)gcode.getCodeValue('Y')));
+				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(1, gcode.getCodeValueInt('Y')));
 			if (gcode.hasCode('Z'))
-				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(2, (int)gcode.getCodeValue('Z')));
+				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(2, gcode.getCodeValueInt('Z')));
 			if (gcode.hasCode('A'))
-				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(3, (int)gcode.getCodeValue('A')));
+				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(3, gcode.getCodeValueInt('A')));
 			if (gcode.hasCode('B'))
-				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(4, (int)gcode.getCodeValue('B')));
+				commands.add(new replicatorg.drivers.commands.SetStepperVoltage(4, gcode.getCodeValueInt('B')));
 				break;
 		// error, error!
 		default:
 			throw new GCodeException("Unknown G code: G"
-					+ (int) gcode.getCodeValue('G'));
+					+ gcode.getCodeValue('G'));
 		}
 	}
 }

@@ -396,11 +396,11 @@ public class Machine implements MachineInterface {
 			// we're going to check for the correct number of toolheads in each command
 			// the list of exceptions keeps growing, do we really need to do this check?
 			// maybe we should just specify the things to check, rather than the reverse
-			if(gcode.getCodeValue('T') > nToolheads-1 && gcode.getCodeValue('M') != 109
-													   && gcode.getCodeValue('M') != 106
-													   && gcode.getCodeValue('M') != 107)
+			if(gcode.getCodeValue('T', -1) > nToolheads-1 && gcode.getCodeValue('M', -1) != 109
+													   && gcode.getCodeValue('M', -1) != 106
+													   && gcode.getCodeValue('M', -1) != 107)
 			{
-				message = "Toolheads index error! You don't have a toolhead numbered " + gcode.getCodeValue('T');
+				message = "Toolheads index error! You don't have a toolhead numbered " + gcode.getCodeValue('T', -1);
 				messages.put(message, lineNumber);
 				message = "Only the first Toolhead index error is logged. Please regenrate your GCode or manually check your gcode to correct.";
 				messages.put(message, lineNumber);
@@ -446,7 +446,7 @@ public class Machine implements MachineInterface {
 		if(gcode.hasCode('Z'))
 			zstop = machineThread.getModel().getEndstops(AxisId.Z);
 		
-		if(gcode.getCodeValue('G') == 161)
+		if(gcode.getCodeValue('G', -1) == 161)
 		{
 			if((xstop != Endstops.MIN) && (xstop != Endstops.BOTH))
 				return false;
@@ -455,7 +455,7 @@ public class Machine implements MachineInterface {
 			if((zstop != Endstops.MIN) && (zstop != Endstops.BOTH))
 				return false;
 		}
-		else if(gcode.getCodeValue('G') == 162)
+		else if(gcode.getCodeValue('G', -1) == 162)
 		{
 			if((xstop != Endstops.MAX) && (xstop != Endstops.BOTH))
 				return false;
@@ -468,7 +468,7 @@ public class Machine implements MachineInterface {
 	}
 	
 	// TODO: Spawn a new thread to handle this for us?
-	public void estimate(GCodeSource source) {
+	@Override public void estimate(GCodeSource source) {
 		if (source == null) {
 			return;
 		}

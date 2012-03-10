@@ -153,7 +153,7 @@ public class MutableGCodeSource implements GCodeSource {
 
 			if(gcode.hasCode('T'))
 			{
-				value = (int)gcode.getCodeValue('T');
+				value = gcode.getCodeValueInt('T');
 				if(value != tool.number)
 				{
 					if(value == 0)
@@ -162,11 +162,11 @@ public class MutableGCodeSource implements GCodeSource {
 						line = line.replace("T1", "T0");
 				}
 			}
-			if(gcode.getCodeValue('G') == 54 && !(tool.getRecallOffsetGcodeCommand().equals("G54")))
+			if(gcode.getCodeValue('G', -1) == 54 && !(tool.getRecallOffsetGcodeCommand().equals("G54")))
 			{
 				line = line.replace("G54", tool.getRecallOffsetGcodeCommand());
 			}
-			if(gcode.getCodeValue('G') == 55 && !(tool.getRecallOffsetGcodeCommand().equals("G55")))
+			if(gcode.getCodeValue('G', -1) == 55 && !(tool.getRecallOffsetGcodeCommand().equals("G55")))
 			{
 				line = line.replace("G55", tool.getRecallOffsetGcodeCommand());
 			}
@@ -198,7 +198,7 @@ public class MutableGCodeSource implements GCodeSource {
 			line = it.next();
 			gcode = new GCodeCommand(line);
 			
-			tval = gcode.getCodeValue('T');
+			tval = gcode.getCodeValue('T', -1);
 			
 			if(tval == 0)	seenT0 = true;
 			if(tval == 1)	seenT1 = true;
@@ -206,7 +206,7 @@ public class MutableGCodeSource implements GCodeSource {
 			if(!addPointFound)
 				additionPoint++;
 			
-			if(gcode.getCodeValue('M') == 104)
+			if(gcode.getCodeValue('M', -1) == 104)
 				addPointFound = true;
 			
 			if(seenT0 && seenT1)

@@ -29,7 +29,7 @@ public class TwitterBotPlugin implements MCodePlugin {
 			return;
 		}
 
-		switch ((int) mcode.getCodeValue(TB_CODE)) {
+		switch (mcode.getCodeValueInt(TB_CODE)) {
 		case TB_INIT:
 			// initialize extension
 			// Syntax: M997 ClassName param,param,param,etc
