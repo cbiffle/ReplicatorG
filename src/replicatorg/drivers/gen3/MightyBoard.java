@@ -297,11 +297,11 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 		for (ToolModel t : getMachine().getTools()) {
 			if (t != null) {
 				initSlave(t.getIndex());
+				getMotorRPM(t.getIndex());		//load our motor RPM from firmware if we can.
 			}
 		}
 
 		getStepperValues(); //read our current steppers into a local cache
-		getMotorRPM();		//load our motor RPM from firmware if we can.
 		if (verifyMachineId() == false ) //read and verify our PID/VID if we can
 		{
 			Base.logger.severe("Machine ID Mismatch. Please re-select your machine.");

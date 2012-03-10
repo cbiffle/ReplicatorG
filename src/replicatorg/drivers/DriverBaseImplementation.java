@@ -457,10 +457,6 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	/***************************************************************************
 	 * Motor interface functions
 	 **************************************************************************/
-	@Deprecated @Override public void setMotorDirection(int dir) {
-		this.setMotorDirection(dir, machine.currentTool().getIndex());
-	}
-
 	@Override
 	public void setMotorDirection(int dir, int toolhead) {
 		/// toolhead -1 indicate auto-detect. Fast hack to get software out..
@@ -477,11 +473,6 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 
 		machine.getTool(toolhead).setMotorSpeedRPM(rpm);
 
-	}
-	
-	@Deprecated @Override
-	public void setMotorSpeedPWM(int pwm) throws RetryException {
-		this.setMotorSpeedPWM(pwm, machine.currentTool().getIndex());
 	}
 	
 	@Override public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException {
@@ -536,17 +527,9 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		
 	}
 
-	@Deprecated @Override public double getMotorRPM() {
-		return getMotorRPM(-1);
-	}
-
 	@Override public double getMotorRPM(int toolhead) {
 		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
 		return machine.getTool(toolhead).getMotorSpeedRPM();
-	}
-
-	@Deprecated @Override public int getMotorSpeedPWM() {
-		return getMotorSpeedPWM(-1);
 	}
 
 	@Override public int getMotorSpeedPWM(int toolhead) {

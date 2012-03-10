@@ -801,14 +801,14 @@ public class ExtruderPanel extends JPanel{
 				machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(AxialDirection.CLOCKWISE,toolhead));
 				// TODO: Hack to support RepRap/Ultimaker- always re-send RPM
 				if (tool.motorHasEncoder() || tool.motorIsStepper()) {
-					machine.runCommand(new replicatorg.drivers.commands.SetMotorSpeedRPM(machine.getDriver().getMotorRPM(),toolhead));
+					machine.runCommand(new replicatorg.drivers.commands.SetMotorSpeedRPM(machine.getDriverQueryInterface().getMotorRPM(toolhead), toolhead));
 				}
 				machine.runCommand(new replicatorg.drivers.commands.EnableExtruderMotor(toolhead));
 			} else if (name.equals("motor-reverse")) {
 				machine.runCommand(new replicatorg.drivers.commands.SetMotorDirection(AxialDirection.COUNTERCLOCKWISE,toolhead));
 				// TODO: Hack to support RepRap/Ultimaker- always re-send RPM
 				if (tool.motorHasEncoder() || tool.motorIsStepper()) {
-					machine.runCommand(new replicatorg.drivers.commands.SetMotorSpeedRPM(machine.getDriver().getMotorRPM(),toolhead));
+					machine.runCommand(new replicatorg.drivers.commands.SetMotorSpeedRPM(machine.getDriverQueryInterface().getMotorRPM(toolhead), toolhead));
 				}
 				machine.runCommand(new replicatorg.drivers.commands.EnableExtruderMotor(toolhead));
 			} else if (name.equals("motor-stop")) {

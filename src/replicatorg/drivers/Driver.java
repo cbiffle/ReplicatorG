@@ -271,18 +271,14 @@ public interface Driver {
 	/***************************************************************************
 	 * Motor interface functions
 	 **************************************************************************/
-	@Deprecated public void setMotorDirection(int dir);
 	public void setMotorDirection(int dir, int toolhead);
 
 	public void setMotorRPM(double rpm, int toolhead) throws RetryException;
 
-	@Deprecated public void setMotorSpeedPWM(int pwm) throws RetryException;
 	public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException;
 
-	@Deprecated public double getMotorRPM();
 	public double getMotorRPM(int toolhead);
 
-	@Deprecated public int getMotorSpeedPWM();
 	public int getMotorSpeedPWM(int toolhead);
 
 	/**

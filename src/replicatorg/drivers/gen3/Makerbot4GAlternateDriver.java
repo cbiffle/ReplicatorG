@@ -236,9 +236,10 @@ public class Makerbot4GAlternateDriver extends Makerbot4GDriver {
 	 * Overridden to not ask the board for the RPM as it would report the RPM from the extruder 
 	 * controller, which doesn't know about it in this case.
 	 */
-	@Override public double getMotorRPM() {
-		double rpm = machine.currentTool().getMotorSpeedRPM();
-		machine.currentTool().setMotorSpeedReadingRPM(rpm);
+	@Override public double getMotorRPM(int toolhead) {
+		ToolModel tool = machine.getTool(toolhead);
+		double rpm = tool.getMotorSpeedRPM();
+		tool.setMotorSpeedReadingRPM(rpm);
 		return rpm;
 	}
 	
