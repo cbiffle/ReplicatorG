@@ -91,6 +91,16 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine = new MachineModel();
 	}	
 	
+	protected int fixToolIndex(int toolhead) {
+		if (toolhead < 0) {
+			new IllegalStateException("Negative toolhead index: " + toolhead)
+					.printStackTrace();
+			return machine.currentTool().getIndex();
+		} else {
+			return toolhead;
+		}
+	}
+
 	@Override public void loadXML(Node xml) {
 	}
 	
@@ -459,8 +469,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	 **************************************************************************/
 	@Override
 	public void setMotorDirection(int dir, int toolhead) {
-		/// toolhead -1 indicate auto-detect. Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).setMotorDirection(dir);		
 	}
@@ -468,24 +477,21 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 
 	@Override
 	public void setMotorRPM(double rpm, int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect. Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).setMotorSpeedRPM(rpm);
 
 	}
 	
 	@Override public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).setMotorSpeedPWM(pwm);
 	}
 
 	@Override
 	public void enableMotor(long millis, int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		enableMotor(toolhead);
 		delay( millis );
@@ -494,27 +500,25 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	
 	@Override
 	public void enableMotor(int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).enableMotor();
 		
 	}
 	
 	@Override public void disableMotor(int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).disableMotor();
 	}
 
 	@Override public double getMotorRPM(int toolhead) {
-		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		return machine.getTool(toolhead).getMotorSpeedRPM();
 	}
 
 	@Override public int getMotorSpeedPWM(int toolhead) {
-		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		return machine.getTool(toolhead).getMotorSpeedPWM();
 	}
 
@@ -527,7 +531,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	}
 	
 	@Override public int getToolStatus(int toolhead) {
-		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		readToolStatus(toolhead);
 
 		return machine.getTool(toolhead).getToolStatus();
@@ -537,34 +541,30 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	 * Spindle interface functions
 	 **************************************************************************/
 	@Override public void setSpindleDirection(int dir, int toolhead) {
-		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		machine.getTool(toolhead).setSpindleDirection(dir);
 	}
 	
 	@Override public void setSpindleRPM(double rpm, int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).setSpindleSpeedRPM(rpm);
 	}
 
 	@Override public void setSpindleSpeedPWM(int pwm, int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).setSpindleSpeedPWM(pwm);
 	}
 
 	@Override public void enableSpindle(int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).enableSpindle();
 	}
 
 	@Override public void disableSpindle(int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).disableSpindle();
 	}
@@ -586,8 +586,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 
 	@Override
 	public void setTemperature(double temperature, int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).setTargetTemperature(temperature);
 	}
@@ -598,8 +597,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 
 	@Override
 	public double getTemperature(int toolhead) {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		return machine.getTool(toolhead).getCurrentTemperature();
 	}
@@ -610,21 +608,18 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	 **************************************************************************/
 	@Override
 	public void setPlatformTemperature(double temperature, int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		machine.getTool(toolhead).setPlatformTargetTemperature(temperature);
 	}
 
 	@Override public void readPlatformTemperature(int toolhead) {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 	
 	}
 
 	@Override public double getPlatformTemperature(int toolhead) {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		readPlatformTemperature(toolhead);
 		return machine.getTool(toolhead).getPlatformCurrentTemperature();
@@ -658,32 +653,28 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	 **************************************************************************/
 	@Override
 	public void enableFan(int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		machine.getTool(toolhead).enableFan();
 	}
 
 
 	@Override
 	public void disableFan(int toolhead) throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		machine.getTool(toolhead).disableFan();
 	}
 	
 	@Override
 	public void setAutomatedBuildPlatformRunning(boolean state, int toolhead)
 			throws RetryException {
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		machine.getTool(toolhead).setAutomatedBuildPlatformRunning(state);
 	}
 
 	
 	@Override public boolean hasAutomatedBuildPlatform(int toolhead)
 	{
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		return machine.getTool(toolhead).hasAutomatedPlatform();
 	}
 
@@ -692,12 +683,12 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	 * @throws RetryException 
 	 **************************************************************************/
 	@Override public void openValve(int toolhead) throws RetryException {
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		machine.getTool(toolhead).openValve();
 	}
 
 	@Override public void closeValve(int toolhead) throws RetryException {
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		machine.getTool(toolhead).closeValve();
 	}
 

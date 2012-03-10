@@ -334,7 +334,7 @@ public class SerialPassthroughDriver extends SerialDriver {
 	}
 	
 	private String _getToolCode(int index) {
-		return "T" + (index == -1 ? machine.currentTool().getIndex() : index) + " ";
+		return "T" + fixToolIndex(index) + " ";
 	}
 
 	/***************************************************************************

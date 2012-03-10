@@ -402,7 +402,7 @@ public class SimpleRepRap5DDriver extends SerialDriver {
 	}
 
 	private String _getToolCode(int toolhead) {
-		return "T" + (toolhead == -1 ? machine.currentTool().getIndex() : toolhead)  + " ";
+		return "T" + fixToolIndex(toolhead)  + " ";
 	}
 	
 	private String _getCurrentToolCode() {

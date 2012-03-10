@@ -1023,7 +1023,7 @@ public class RepRap5DDriver extends SerialDriver implements SerialFifoEventListe
 	}
 
 	private String _getToolCode(int toolhead) {
-		return "T" + (toolhead == -1 ? machine.currentTool().getIndex() : toolhead) + " ";
+		return "T" + fixToolIndex(toolhead) + " ";
 	}
 	
 	String _getCurrentToolCode() {

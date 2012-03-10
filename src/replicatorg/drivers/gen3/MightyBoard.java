@@ -1090,8 +1090,7 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 	@Override
 	public void enableMotor(int toolhead) throws RetryException {
 
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		
 		//WARNING: this in unsafe, since tool is checked
@@ -1115,8 +1114,7 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 	@Override
 	public void disableMotor(int toolhead) throws RetryException {
 
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 		
 		ToolModel curTool = machine.getTool(toolhead);//WARNING: this in unsafe, since tool is checked
 
@@ -1459,8 +1457,7 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 	@Override
 	public void setMotorRPM(double rpm, int toolhead) throws RetryException {
 	
-		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
-		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
+		toolhead = fixToolIndex(toolhead);
 
 		ToolModel curTool = machine.getTool(toolhead);//WARNING: this in unsafe, since tool is checked
 
