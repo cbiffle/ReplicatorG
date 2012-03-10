@@ -298,6 +298,8 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 			if (t != null) {
 				initSlave(t.getIndex());
 				getMotorRPM(t.getIndex());		//load our motor RPM from firmware if we can.
+				// I have no idea why we still do this, we may want to test and refactor away
+				getSpindleSpeedPWM(t.getIndex());
 			}
 		}
 
@@ -314,8 +316,6 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 			Base.logger.severe("Please double-check your selected machine.");
 		}
 		
-		// I have no idea why we still do this, we may want to test and refactor away
-		getSpindleSpeedPWM();
 		return true;
 	}
 

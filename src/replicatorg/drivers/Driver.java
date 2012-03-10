@@ -299,25 +299,18 @@ public interface Driver {
 	 * Spindle interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	@Deprecated public void setSpindleRPM(double rpm) throws RetryException;
 	public void setSpindleRPM(double rpm, int toolhead) throws RetryException;
 
-	@Deprecated public void setSpindleSpeedPWM(int pwm) throws RetryException;
 	public void setSpindleSpeedPWM(int pwm, int toolhead) throws RetryException;
 
-	@Deprecated public void setSpindleDirection(int dir);
 	public void setSpindleDirection(int dir, int toolhead);
 
-	@Deprecated public double getSpindleRPM();
 	public double getSpindleRPM(int toolhead);
 
-	@Deprecated public int getSpindleSpeedPWM();
 	public int getSpindleSpeedPWM(int toolhead);
 
-	@Deprecated public void enableSpindle() throws RetryException;
 	public void enableSpindle(int toolhead) throws RetryException;
 
-	@Deprecated public void disableSpindle() throws RetryException;
 	public void disableSpindle(int toolhead) throws RetryException;
 
 	/***************************************************************************
@@ -453,7 +446,5 @@ public interface Driver {
 	 * reads temperature from all heated build platforms
 	 */
 	public void readAllPlatformTemperatures();
-	
-
 
 }

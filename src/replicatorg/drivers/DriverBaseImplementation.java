@@ -535,31 +535,10 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	
 	/***************************************************************************
 	 * Spindle interface functions
-	 * @deprecated
 	 **************************************************************************/
-	@Deprecated @Override public void setSpindleDirection(int dir) {
-		setSpindleDirection(dir, -1);
-	}
-
-	@Deprecated @Override public void setSpindleDirection(int dir, int toolhead) {
+	@Override public void setSpindleDirection(int dir, int toolhead) {
 		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
 		machine.getTool(toolhead).setSpindleDirection(dir);
-	}
-
-	@Deprecated @Override public void setSpindleRPM(double rpm) throws RetryException {
-		setSpindleRPM(rpm, -1);
-	}
-
-	@Deprecated @Override public void setSpindleSpeedPWM(int pwm) throws RetryException {
-		setSpindleSpeedPWM(pwm, -1);
-	}
-
-	@Deprecated @Override public void enableSpindle() throws RetryException {
-		enableSpindle(-1);
-	}
-
-	@Deprecated @Override public void disableSpindle() throws RetryException {
-		disableSpindle(-1);
 	}
 	
 	@Override public void setSpindleRPM(double rpm, int toolhead) throws RetryException {
@@ -590,19 +569,11 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine.getTool(toolhead).disableSpindle();
 	}
 	
-	@Deprecated @Override public double getSpindleRPM() {
-		return getSpindleRPM(-1);
-	}
-	
 	@Override public double getSpindleRPM(int toolhead) {
 		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
 		return machine.getTool(toolhead).getSpindleSpeedReadingRPM();
 	}
 
-	@Deprecated @Override public int getSpindleSpeedPWM() {
-		return getSpindleSpeedPWM(-1);
-	}
-	
 	@Override public int getSpindleSpeedPWM(int toolhead) {
 		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
 		return machine.currentTool().getSpindleSpeedReadingPWM();
