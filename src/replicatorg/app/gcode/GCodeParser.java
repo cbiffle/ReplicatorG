@@ -317,17 +317,21 @@ public class GCodeParser {
 			break;
 		// spindle on, CW
 		case M3:
-			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(DriverCommand.AxialDirection.CLOCKWISE));
-			commands.add(new replicatorg.drivers.commands.EnableSpindle());
+			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(
+					DriverCommand.AxialDirection.CLOCKWISE,
+					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.EnableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			break;
 		// spindle on, CCW
 		case M4:
-			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(DriverCommand.AxialDirection.COUNTERCLOCKWISE));
-			commands.add(new replicatorg.drivers.commands.EnableSpindle());
+			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(
+					DriverCommand.AxialDirection.COUNTERCLOCKWISE,
+					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.EnableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			break;
 		// spindle off
 		case M5:
-			commands.add(new replicatorg.drivers.commands.DisableSpindle());
+			commands.add(new replicatorg.drivers.commands.DisableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			break;
 		// tool change.
 		case M6:
@@ -373,14 +377,18 @@ public class GCodeParser {
 			break;
 		// spindle CW and coolant A on
 		case M13:
-			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(DriverCommand.AxialDirection.CLOCKWISE));
-			commands.add(new replicatorg.drivers.commands.EnableSpindle());
+			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(
+					DriverCommand.AxialDirection.CLOCKWISE,
+					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.EnableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			commands.add(new replicatorg.drivers.commands.EnableFloodCoolant());
 			break;
 		// spindle CCW and coolant A on
 		case M14:
-			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(DriverCommand.AxialDirection.COUNTERCLOCKWISE));
-			commands.add(new replicatorg.drivers.commands.EnableSpindle());
+			commands.add(new replicatorg.drivers.commands.SetSpindleDirection(
+					DriverCommand.AxialDirection.COUNTERCLOCKWISE,
+					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			commands.add(new replicatorg.drivers.commands.EnableSpindle(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			commands.add(new replicatorg.drivers.commands.EnableFloodCoolant());
 			break;
 		// enable drives
@@ -487,8 +495,11 @@ public class GCodeParser {
 			break;
 		// custom code for temperature control
 		case M104:
-			if (gcode.hasCode('S'))
-				commands.add(new replicatorg.drivers.commands.SetTemperature(gcode.getCodeValue('S')));
+			if (gcode.hasCode('S')) {
+				commands.add(new replicatorg.drivers.commands.SetTemperature(
+						gcode.getCodeValue('S'),
+						gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
+			}
 			break;
 		// custom code for temperature reading
 		// TODO: This command seems like a hack, it would be better for the driver to poll temperature rather than
@@ -525,7 +536,9 @@ public class GCodeParser {
 		case M109:
 		case M140: // skeinforge chamber code for HBP
 			if (gcode.hasCode('S'))
-				commands.add(new replicatorg.drivers.commands.SetPlatformTemperature(gcode.getCodeValue('S')));
+				commands.add(new replicatorg.drivers.commands.SetPlatformTemperature(
+						gcode.getCodeValue('S'),
+						gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			break;
 		// set build chamber temperature
 		case M110:
@@ -621,7 +634,6 @@ public class GCodeParser {
 		double qVal = convertToMM(gcode.getCodeValue('Q'), units); // / feed
 																// increment for
 																// G83
-		double rVal = convertToMM(gcode.getCodeValue('R'), units); // / arc radius
 		double xVal = convertToMM(gcode.getCodeValue('X'), units); // / X units
 		double yVal = convertToMM(gcode.getCodeValue('Y'), units); // / Y units
 		double zVal = convertToMM(gcode.getCodeValue('Z'), units); // / Z units
@@ -893,7 +905,9 @@ public class GCodeParser {
 //			break;
 		// spindle speed rate
 		case G97:
-			commands.add(new replicatorg.drivers.commands.SetSpindleRPM(gcode.getCodeValue('S')));
+			commands.add(new replicatorg.drivers.commands.SetSpindleRPM(
+					gcode.getCodeValue('S'),
+					gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			break;	
 		case G130:
 			/// TODO:  axis ids should not be hard coded

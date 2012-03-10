@@ -15,14 +15,8 @@ public class SetSpindleDirection implements DriverCommand {
 		this.direction = direction;
 	}
 	
-	@Deprecated public SetSpindleDirection(AxialDirection direction) {
-		this.toolIndex = -1;  // Magic number to infer current tool index
-		this.direction = direction;
-	}
-	
 	@Override
 	public void run(Driver driver) {
-		// TODO Auto-generated method stub
 		if (direction == AxialDirection.CLOCKWISE) {
 			driver.setSpindleDirection(ToolModel.MOTOR_CLOCKWISE, toolIndex);
 		}

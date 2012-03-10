@@ -13,10 +13,6 @@ public class EnableSpindle implements DriverCommand {
 				"Tool indices should not be negative");
 	}
 	
-	@Deprecated public EnableSpindle() {
-		this.toolIndex = -1;  // Magic number to infer current tool index
-	}
-	
 	@Override
 	public void run(Driver driver) throws RetryException {
 		driver.enableSpindle(toolIndex);

@@ -1,5 +1,7 @@
 package replicatorg.drivers.commands;
 
+import static replicatorg.util.Preconditions.*;
+
 import replicatorg.drivers.Driver;
 import replicatorg.drivers.RetryException;
 
@@ -9,24 +11,14 @@ public class SetPlatformTemperature implements DriverCommand {
 	int toolIndex = -1;
 
 	/**
-	 * Set temperature, trusting and hoping the right toolhead is active
-	 * when we do. 
-	 * @param temperature
-	 */
-	@Deprecated
-	public SetPlatformTemperature(double temperature) {
-		this.temperature = temperature;
-		this.toolIndex  = -1;// do problematic 'getcurrent tool' when comand runs
-	}
-	
-	/**
 	 * Set temperature for a specified toolhead
 	 * @param temperature
 	 * @param toolIndex
 	 */
 	public SetPlatformTemperature(double temperature, int toolIndex) {
 		this.temperature = temperature;
-		this.toolIndex = toolIndex;
+		this.toolIndex = checkNonNegative(toolIndex,
+				"Tool indices should not be negative");
 	}
 
 	@Override

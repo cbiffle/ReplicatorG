@@ -15,11 +15,6 @@ public class SetSpindleRPM implements DriverCommand {
 		this.rpm = rpm;
 	}
 	
-	@Deprecated public SetSpindleRPM(double rpm) {
-		this.toolIndex = -1;  // Magic number to infer current tool index
-		this.rpm = rpm;
-	}
-	
 	@Override
 	public void run(Driver driver) throws RetryException {
 		driver.setSpindleRPM(rpm, toolIndex);
