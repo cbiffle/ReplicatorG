@@ -285,17 +285,14 @@ public interface Driver {
 	 * Enable motor until stopped by disableMotor
 	 * @throws RetryException 
 	 */
-	@Deprecated public void enableMotor() throws RetryException;
 	public void enableMotor(int toolhead) throws RetryException;
 
 	/**
 	 * Enable motor for a fixed duration, then disable
 	 * @throws RetryException 
 	 */
-	@Deprecated public void enableMotor(long millis) throws RetryException;
 	public void enableMotor(long millis, int toolhead) throws RetryException;
 
-	@Deprecated public void disableMotor() throws RetryException;
 	public void disableMotor(int toolhead) throws RetryException;
 
 	/***************************************************************************

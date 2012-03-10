@@ -482,17 +482,6 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine.getTool(toolhead).setMotorSpeedPWM(pwm);
 	}
 
-	
-	@Deprecated @Override
-	public void enableMotor() throws RetryException {
-		this.enableMotor(machine.currentTool().getIndex());
-	}
-
-	@Deprecated @Override
-	public void enableMotor(long millis) throws RetryException {
-		this.enableMotor(millis, machine.currentTool().getIndex());
-	}
-
 	@Override
 	public void enableMotor(long millis, int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
@@ -511,20 +500,12 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine.getTool(toolhead).enableMotor();
 		
 	}
-
-
 	
 	@Override public void disableMotor(int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
 		machine.getTool(toolhead).disableMotor();
-	}
-
-	@Deprecated @Override
-	public void disableMotor() throws RetryException {
-		this.disableMotor(-1);
-		
 	}
 
 	@Override public double getMotorRPM(int toolhead) {
