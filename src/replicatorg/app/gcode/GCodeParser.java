@@ -533,11 +533,11 @@ public class GCodeParser {
 			break;
 		// valve open
 		case M126:
-			commands.add(new replicatorg.drivers.commands.OpenValve());
+			commands.add(new replicatorg.drivers.commands.OpenValve(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			break;
 		// valve close
 		case M127:
-			commands.add(new replicatorg.drivers.commands.CloseValve());
+			commands.add(new replicatorg.drivers.commands.CloseValve(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			break;
 		// where are we?
 		case M128:

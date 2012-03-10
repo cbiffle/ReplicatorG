@@ -113,13 +113,21 @@ public class GCodeCommand {
 	}
 
 	public double getCodeValue(char searchCode) {
+		return getCodeValue(searchCode, -1);
+	}
+	
+	public double getCodeValue(char searchCode, double fallback) {
 		for (gCodeParameter parameter : parameters) {
 			if (parameter.code == searchCode) {
 				return parameter.value;
 			}
 		}
 		
-		return -1;	// TODO: What do we return if there is no code?
+		return fallback;
+	}
+	
+	public int getCodeValueInt(char searchCode, int fallback) {
+		return (int) getCodeValue(searchCode, fallback);
 	}
 	
 //	public Double removeCode(Character searchCode) {

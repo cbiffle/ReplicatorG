@@ -13,10 +13,6 @@ public class OpenValve implements DriverCommand {
 				"Tool indices should not be negative");
 	}
 	
-	@Deprecated public OpenValve() {
-		this.toolIndex = -1;  // Magic number to infer current tool
-	}
-	
 	@Override
 	public void run(Driver driver) throws RetryException {
 		driver.openValve(toolIndex);

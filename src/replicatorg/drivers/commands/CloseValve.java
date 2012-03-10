@@ -12,10 +12,6 @@ public class CloseValve implements DriverCommand {
 				"Tool indices should not be negative");
 	}
 	
-	@Deprecated public CloseValve() {
-		this.toolIndex = -1;  // Magic number to infer current tool
-	}
-
 	@Override
 	public void run(Driver driver) throws RetryException {
 		driver.closeValve(toolIndex);
