@@ -358,7 +358,7 @@ public class Machine implements MachineInterface {
 		{
 			try
 			{
-				gcode = new GCodeCommand(line);
+				gcode = GCodeCommand.parse(line);
 			} //Catching every kind of exception is generally bad form,
 			//  It can hide where the problem is happening, and should be avoided
 			//  But I'm doing it anyway.

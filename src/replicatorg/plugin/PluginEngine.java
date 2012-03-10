@@ -20,12 +20,12 @@ public class PluginEngine implements GCodeSource {
 		this.plugins = plugins;
 	}
 	
-	public int getLineCount() {
+	@Override public int getLineCount() {
 		return parent.getLineCount();
 	}
 
 	private void processLine(String line) {
-		GCodeCommand mcode = new GCodeCommand(line);
+		GCodeCommand mcode = GCodeCommand.parse(line);
 		if( mcode.hasCode('M')) {
 			double code = mcode.getCodeValue('M');
 		
@@ -48,22 +48,22 @@ public class PluginEngine implements GCodeSource {
 		public GCodeIterator(Iterator<String> parent) {
 			this.parent = parent;
 		}
-		public boolean hasNext() {
+		@Override public boolean hasNext() {
 			return parent.hasNext();
 		}
 
-		public String next() {
+		@Override public String next() {
 			String next = parent.next();
 			processLine(next);
 			return next;
 		}
 
-		public void remove() {
+		@Override public void remove() {
 			parent.remove();
 		}
 	}
 	
-	public Iterator<String> iterator() {
+	@Override public Iterator<String> iterator() {
 		return new GCodeIterator(parent.iterator());
 	}
 

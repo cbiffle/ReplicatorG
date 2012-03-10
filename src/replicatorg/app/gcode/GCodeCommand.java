@@ -1,60 +1,59 @@
 package replicatorg.app.gcode;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class GCodeCommand {
 
 	// These are the letter codes that we understand
-	static protected char[] codes = { 
+	private static final char[] codes = { 
 		'A', 'B', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L',
 		'M', 'P', 'Q', 'R', 'S', 'T', 'X', 'Y', 'Z' };
 	
 	// pattern matchers.
-	static Pattern parenPattern  = Pattern.compile("\\((.*)\\)");
-	static Pattern semiPattern = Pattern.compile(";(.*)");
-	static Pattern deleteBlockPattern = Pattern.compile("^(\\.*)");
+	private static final Pattern parenPattern  = Pattern.compile("\\((.*)\\)");
+	private static final Pattern semiPattern = Pattern.compile(";(.*)");
 	
 	
 	// The actual GCode command string
-	private String command;
+	private final String command;
 
 	// Parsed out comment
-	private String comment = new String();
+	private final String comment;
+	
+	private final Map<Character, Double> parameters;
 
-	private class gCodeParameter {
-		final public char code;
-		final public Double value;
-		gCodeParameter(char code, Double value) {
-			this.code = code;
-			this.value = value;
-		}
+	/*
+	 * Note: this constructor takes ownership of the map, rather than copying
+	 * it.  This is okay for the static parse method, but be careful when
+	 * adding new ways to obtain a GCodeCommand.
+	 */
+	private GCodeCommand(String command, String comment,
+			Map<Character, Double> parameters) {
+		this.command = command;
+		this.comment = comment;
+		this.parameters = parameters;
 	}
 	
-	// The set of parameters in this GCode
-	private List<gCodeParameter> parameters;
-
-	public GCodeCommand(String command) {
-		// Copy over the command
-		this.command = new String(command);
+	public static GCodeCommand parse(String command) {
+		String comment = parseComments(command);
+		command = filterOutComments(command);
 		
-		// Initialize the present and value tables
-		this.parameters = new ArrayList<gCodeParameter>();
+		Map<Character, Double> parameters = parseCodes(command);
 		
-		// Parse (and strip) any comments out into a comment string
-		parseComments();
-
-		// Parse any codes out into the code tables
-		parseCodes();
+		return new GCodeCommand(command, comment, parameters);
 	}
 	
 	// Find any comments, store them, then remove them from the command 
-	private void parseComments() {
+	private static String parseComments(String command) {
 		Matcher parenMatcher = parenPattern.matcher(command);
 		Matcher semiMatcher = semiPattern.matcher(command);
 
+		String comment = "";
+		
 		// Note that we only support one style of comments, and only one comment per row. 
 		if (parenMatcher.find())
 			comment = parenMatcher.group(1);
@@ -66,15 +65,18 @@ public class GCodeCommand {
 		comment = comment.trim();
 		comment = comment.replace('|', '\n');
 
-		// Finally, remove the comments from the command string
-		command = parenMatcher.replaceAll("");
-		
-		semiMatcher = semiPattern.matcher(command);
-		command = semiMatcher.replaceAll("");
+		return comment;
+	}
+	
+	private static String filterOutComments(String command) {
+		command = parenPattern.matcher(command).replaceAll("");
+		command = semiPattern.matcher(command).replaceAll("");
+		return command;
 	}
 
 	// Find any codes, and store them
-	private void parseCodes() {
+	private static Map<Character, Double> parseCodes(String command) {
+		Map<Character, Double> parameters = new HashMap<Character, Double>();
 		for (char code : codes) {
 			Pattern myPattern = Pattern.compile(code + "([0-9.+-]+)");
 			Matcher myMatcher = myPattern.matcher(command);
@@ -87,18 +89,20 @@ public class GCodeCommand {
 					value = Double.parseDouble(match);
 				}
 				
-				parameters.add(new gCodeParameter(code, value));
+				parameters.put(code, value);
 			}
 		}
+		// Freeze the map to prevent accidental modifications later.
+		return Collections.unmodifiableMap(parameters);
 	}
 
 	public String getCommand() {
 		// TODO: Note that this is the command minus any comments.
-		return new String(command);
+		return command;
 	}
 	
 	public String getComment() {
-		return new String(comment);
+		return comment;
 	}
 	
 	/**
@@ -111,13 +115,7 @@ public class GCodeCommand {
 	 *     code, {@code false} otherwise.
 	 */
 	public boolean hasCode(char searchCode) {
-		for (gCodeParameter parameter : parameters) {
-			if (parameter.code == searchCode) {
-				return true;
-			}
-		}
-		
-		return false;
+		return parameters.containsKey(searchCode);
 	}
 
 	/**
@@ -131,10 +129,8 @@ public class GCodeCommand {
 	 *     This indicates a bug in the calling program.
 	 */
 	public double getCodeValue(char searchCode) {
-		for (gCodeParameter parameter : parameters) {
-			if (parameter.code == searchCode) {
-				return parameter.value;
-			}
+		if (parameters.containsKey(searchCode)) {
+			return parameters.get(searchCode);
 		}
 		
 		throw new IllegalStateException(
@@ -161,13 +157,7 @@ public class GCodeCommand {
 	 *     fallback} otherwise.
 	 */
 	public double getCodeValue(char searchCode, double fallback) {
-		for (gCodeParameter parameter : parameters) {
-			if (parameter.code == searchCode) {
-				return parameter.value;
-			}
-		}
-		
-		return fallback;
+		return parameters.containsKey(searchCode) ? parameters.get(searchCode) : fallback;
 	}
 	
 	/**
@@ -181,15 +171,7 @@ public class GCodeCommand {
 	 *     This indicates a bug in the calling program.
 	 */
 	public int getCodeValueInt(char searchCode) {
-		for (gCodeParameter parameter : parameters) {
-			if (parameter.code == searchCode) {
-				return parameter.value.intValue();
-			}
-		}
-		
-		throw new IllegalStateException(
-				"getCodeValueInt called for nonexistent code " + searchCode
-				+ "; caller should have checked hasCode first!");
+		return (int) getCodeValue(searchCode);
 	}
 	
 	/**
@@ -210,31 +192,4 @@ public class GCodeCommand {
 		return (int) getCodeValue(searchCode, fallback);
 	}
 	
-
-//	public Double removeCode(Character searchCode) {
-//		for (Iterator<gCodeParameter> i = parameters.iterator(); i.hasNext();)
-//		{
-//			gCodeParameter gcp = i.next();
-//			if(gcp.code == searchCode)
-//			{
-//				i.remove();
-//				return gcp.value;
-//			}
-//		}
-//		return null;
-//	}
-//	
-//	public void addCode(Character code, Double value)
-//	{
-//		parameters.add(new gCodeParameter(code, value));
-//		command += " ";
-//		command = command.concat(code.toString()).concat(value.toString());
-//	}
-//	
-//	public void addCode(Character code, Integer value)
-//	{
-//		parameters.add(new gCodeParameter(code, ((Number)value).doubleValue()));
-//		command += " ";
-//		command = command.concat(code.toString()).concat(value.toString());
-//	}
 }

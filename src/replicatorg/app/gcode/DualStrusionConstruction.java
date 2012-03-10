@@ -196,7 +196,7 @@ public class DualStrusionConstruction
 		double lastZHeight = Double.MIN_VALUE;
 		for(String line : source)
 		{
-			GCodeCommand gcode = new GCodeCommand(line);
+			GCodeCommand gcode = GCodeCommand.parse(line);
 			
 			if(gcode.getCodeValue('M', -1) == 103)
 				lastM103 = line;
@@ -391,7 +391,7 @@ public class DualStrusionConstruction
 		GCodeCommand gcode;
 		for(int i = 0; i < search.size(); i++)
 		{
-			gcode = new GCodeCommand(search.get(i));
+			gcode = GCodeCommand.parse(search.get(i));
 			if(gcode.getCodeValue('G', -1) == 1)
 			{
 				Point5d result = new Point5d();
@@ -417,7 +417,7 @@ public class DualStrusionConstruction
 		GCodeCommand gcode;
 		for(int i = search.size()-1; i >= 0; i--)
 		{
-			gcode = new GCodeCommand(search.get(i));
+			gcode = GCodeCommand.parse(search.get(i));
 			if(gcode.getCodeValue('G', -1) == 1 && gcode.hasCode('Z'))
 			{
 				return gcode.getCodeValue('Z');
@@ -437,7 +437,7 @@ public class DualStrusionConstruction
 		GCodeCommand gcode;
 		for(int i = search.size()-1; i >= 0; i--)
 		{
-			gcode = new GCodeCommand(search.get(i));
+			gcode = GCodeCommand.parse(search.get(i));
 			if(gcode.hasCode('F'))
 				return "F"+Base.getGcodeFormat().format(gcode.getCodeValue('F'));
 		}
@@ -454,7 +454,7 @@ public class DualStrusionConstruction
 		GCodeCommand gcode;
 		for(int i = 0; i < search.size(); i++)
 		{
-			gcode = new GCodeCommand(search.get(i));
+			gcode = GCodeCommand.parse(search.get(i));
 			if(gcode.hasCode('F'))
 				return "F"+Base.getGcodeFormat().format(gcode.getCodeValue('F'));
 		}

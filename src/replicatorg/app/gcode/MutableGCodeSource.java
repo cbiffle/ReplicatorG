@@ -149,7 +149,7 @@ public class MutableGCodeSource implements GCodeSource {
 		for(Iterator<String> it = source.iterator(); it.hasNext(); )
 		{
 			line = it.next();
-			gcode = new GCodeCommand(line);
+			gcode = GCodeCommand.parse(line);
 
 			if(gcode.hasCode('T'))
 			{
@@ -196,7 +196,7 @@ public class MutableGCodeSource implements GCodeSource {
 		for(Iterator<String> it = source.iterator(); it.hasNext(); )
 		{
 			line = it.next();
-			gcode = new GCodeCommand(line);
+			gcode = GCodeCommand.parse(line);
 			
 			tval = gcode.getCodeValue('T', -1);
 			

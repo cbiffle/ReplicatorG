@@ -227,7 +227,7 @@ public class GCodeParser {
 	public boolean parse(String cmd, Queue< DriverCommand > commandQueue) {
 		
 		// First, parse the GCode string into an object we can query.
-		GCodeCommand gcode = new GCodeCommand(cmd);
+		GCodeCommand gcode = GCodeCommand.parse(cmd);
 
 		// Now, convert the GCode instruction into a series of driver commands,
 		// that will be executed by execute()
