@@ -371,10 +371,8 @@ public interface Driver {
 	 * Fan interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	@Deprecated public void enableFan() throws RetryException;
 	public void enableFan(int toolhead) throws RetryException;
 
-	@Deprecated public void disableFan() throws RetryException;
 	public void disableFan(int toolhead) throws RetryException;
 
 	

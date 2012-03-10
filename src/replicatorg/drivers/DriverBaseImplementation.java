@@ -684,11 +684,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	/***************************************************************************
 	 * Fan interface functions
 	 * @throws RetryException 
-	 * @deprecated
 	 **************************************************************************/
-	@Deprecated @Override public void enableFan() throws RetryException {
-		this.enableFan(machine.currentTool().getIndex());		
-	}
 	@Override
 	public void enableFan(int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
@@ -696,10 +692,6 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine.getTool(toolhead).enableFan();
 	}
 
-
-	@Deprecated @Override public void disableFan() throws RetryException {
-		this.disableFan(machine.currentTool().getIndex());
-	}
 
 	@Override
 	public void disableFan(int toolhead) throws RetryException {
