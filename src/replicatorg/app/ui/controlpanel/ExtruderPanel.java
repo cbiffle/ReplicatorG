@@ -748,6 +748,7 @@ public class ExtruderPanel extends JPanel{
 	{
 		String name = source.getName();
 		int toolhead;
+		boolean platform = false;
 		double newValue = Double.NaN;
 
 		// tools position may not match index
@@ -755,9 +756,10 @@ public class ExtruderPanel extends JPanel{
 			toolhead = tool0.getIndex();
 		else if(source == t1TargetTemperatureField)
 			toolhead = tool1.getIndex();
-		else if(source == pTargetTemperatureField)
-			toolhead = -1; // -1 means autodetect
-		else {
+		else if(source == pTargetTemperatureField) {
+			toolhead = tool0.getIndex();
+			platform = true;
+		} else {
 			Base.logger.warning("Unhandled text field: "+name);
 			return;
 		}
@@ -767,7 +769,7 @@ public class ExtruderPanel extends JPanel{
 			newValue = ((Number)source.getValue()).doubleValue();
 			
 			// if we have a toolhead temperature
-			if(toolhead != -1) {
+			if (!platform) {
 				newValue = confirmTemperature(newValue,"temperature.acceptedLimit",260.0);
 				if (newValue == Double.MIN_VALUE) {
 					return;
