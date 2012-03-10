@@ -719,16 +719,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	/***************************************************************************
 	 * Valve interface functions
 	 * @throws RetryException 
-	 * @deprecated
 	 **************************************************************************/
-	@Deprecated @Override public void openValve() throws RetryException {
-		openValve(-1);
-	}
-
-	@Deprecated @Override public void closeValve() throws RetryException {
-		closeValve(-1);
-	}
-	
 	@Override public void openValve(int toolhead) throws RetryException {
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 		machine.getTool(toolhead).openValve();

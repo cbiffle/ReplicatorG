@@ -386,10 +386,8 @@ public interface Driver {
 	 * Valve interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	@Deprecated public void openValve() throws RetryException;
 	public void openValve(int toolhead) throws RetryException;
 
-	@Deprecated public void closeValve() throws RetryException;
 	public void closeValve(int toolhead) throws RetryException;
 
 	/*************************************************************************
