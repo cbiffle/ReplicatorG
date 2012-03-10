@@ -455,7 +455,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	 * @deprecated
 	 **************************************************************************/
 	@Deprecated @Override public void setMotorDirection(int dir) {
-		this.setMotorDirection(machine.currentTool().getIndex());
+		this.setMotorDirection(dir, machine.currentTool().getIndex());
 	}
 
 	@Override
