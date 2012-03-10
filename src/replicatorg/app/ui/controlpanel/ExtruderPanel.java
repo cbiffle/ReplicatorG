@@ -852,7 +852,7 @@ public class ExtruderPanel extends JPanel{
 					machine.runCommand(new replicatorg.drivers.commands.SelectTool(toolhead));
 
 					machine.runCommand(new replicatorg.drivers.commands.EnableExtruderMotor(toolhead));
-					machine.runCommand(new replicatorg.drivers.commands.Delay(extrudeTime*1000,toolhead));
+					machine.runCommand(new replicatorg.drivers.commands.Delay(extrudeTime*1000));
 					machine.runCommand(new replicatorg.drivers.commands.DisableMotor(toolhead));
 				}
 			}
@@ -867,7 +867,7 @@ public class ExtruderPanel extends JPanel{
 					machine.runCommand(new replicatorg.drivers.commands.SelectTool(toolhead));
 
 					machine.runCommand(new replicatorg.drivers.commands.EnableExtruderMotor(toolhead));
-					machine.runCommand(new replicatorg.drivers.commands.Delay(extrudeTime*1000,toolhead));
+					machine.runCommand(new replicatorg.drivers.commands.Delay(extrudeTime*1000));
 					machine.runCommand(new replicatorg.drivers.commands.DisableMotor(toolhead));
 				}
 			}

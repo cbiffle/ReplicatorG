@@ -480,18 +480,22 @@ public class GCodeParser {
 			// Manually sets the percent complete info on the bot.
 			commands.add(new replicatorg.drivers.commands.SetBuildPercent(gcode.getCodeValue('P'), gcode.getComment() ) );
 			break;			
-		case M101:
-			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.CLOCKWISE));
-			commands.add(new replicatorg.drivers.commands.EnableExtruderMotor());
+		case M101: {
+			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
+			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.CLOCKWISE,	toolIndex));
+			commands.add(new replicatorg.drivers.commands.EnableExtruderMotor(toolIndex));
 			break;
+		}
 		// turn extruder on, reverse
-		case M102:
-			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.COUNTERCLOCKWISE));
-			commands.add(new replicatorg.drivers.commands.EnableExtruderMotor());
+		case M102: {
+			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
+			commands.add(new replicatorg.drivers.commands.SetMotorDirection(DriverCommand.AxialDirection.COUNTERCLOCKWISE, toolIndex));
+			commands.add(new replicatorg.drivers.commands.EnableExtruderMotor(toolIndex));
 			break;
+		}
 		// turn extruder off
 		case M103:
-			commands.add(new replicatorg.drivers.commands.DisableMotor());
+			commands.add(new replicatorg.drivers.commands.DisableMotor(gcode.getCodeValueInt('T', driver.getCurrentToolIndex())));
 			break;
 		// custom code for temperature control
 		case M104:
@@ -509,29 +513,31 @@ public class GCodeParser {
 			break;
 		// turn AutomatedBuildPlatform on
 		case M106: {
-			int toolIndex = gcode.hasCode('T') ? (int) gcode.getCodeValue('T') : driver.getCurrentToolIndex();
+			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
 			if(driver.hasAutomatedBuildPlatform(toolIndex))
-				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(true));
+				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(true, toolIndex));
 			else
-				commands.add(new replicatorg.drivers.commands.EnableFan());
+				commands.add(new replicatorg.drivers.commands.EnableFan(toolIndex));
 			break;
 		}
 		// turn AutomatedBuildPlatform off
 		case M107: {
-			int toolIndex = gcode.hasCode('T') ? (int) gcode.getCodeValue('T') : driver.getCurrentToolIndex();
+			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
 			if(driver.hasAutomatedBuildPlatform(toolIndex))
-				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(false));
+				commands.add(new replicatorg.drivers.commands.ToggleAutomatedBuildPlatform(false, toolIndex));
 			else
-				commands.add(new replicatorg.drivers.commands.DisableFan());
+				commands.add(new replicatorg.drivers.commands.DisableFan(toolIndex));
 			break;
 		}
 		// set max extruder speed, RPM
-		case M108:
+		case M108: {
+			int toolIndex = gcode.getCodeValueInt('T', driver.getCurrentToolIndex());
 			if (gcode.hasCode('S'))
-				commands.add(new replicatorg.drivers.commands.SetMotorSpeedPWM((int)gcode.getCodeValue('S')));
+				commands.add(new replicatorg.drivers.commands.SetMotorSpeedPWM((int)gcode.getCodeValue('S'), toolIndex));
 			else if (gcode.hasCode('R'))
-				commands.add(new replicatorg.drivers.commands.SetMotorSpeedRPM(gcode.getCodeValue('R')));
+				commands.add(new replicatorg.drivers.commands.SetMotorSpeedRPM(gcode.getCodeValue('R'), toolIndex));
 			break;
+		}
 		// set build platform temperature
 		case M109:
 		case M140: // skeinforge chamber code for HBP

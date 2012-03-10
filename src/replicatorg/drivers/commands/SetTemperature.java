@@ -7,8 +7,8 @@ import replicatorg.drivers.RetryException;
 
 public class SetTemperature implements DriverCommand {
 
-	double temperature;
-	int toolhead = -1;
+	private final double temperature;
+	private final int toolhead;
 	
 	/**
 	 * Set temperature, specifying the toolhead index. 
