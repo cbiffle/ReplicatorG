@@ -447,7 +447,7 @@ public class GCodeParser {
 		// read spindle speed
 		case M50:
 			if (gcode.hasCode('T')) {
-				driver.getSpindleRPM((int) gcode.getCodeValue('P'));
+				driver.getSpindleRPM((int) gcode.getCodeValue('T'));
 			} else {
 				driver.getSpindleRPM(driver.getCurrentToolIndex());
 			}
