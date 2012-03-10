@@ -452,7 +452,6 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 
 	/***************************************************************************
 	 * Motor interface functions
-	 * @deprecated
 	 **************************************************************************/
 	@Deprecated @Override public void setMotorDirection(int dir) {
 		this.setMotorDirection(dir, machine.currentTool().getIndex());
@@ -533,12 +532,22 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		
 	}
 
-	@Override public double getMotorRPM() {
-		return machine.currentTool().getMotorSpeedRPM();
+	@Deprecated @Override public double getMotorRPM() {
+		return getMotorRPM(-1);
 	}
 
-	@Override public int getMotorSpeedPWM() {
-		return machine.currentTool().getMotorSpeedReadingPWM();
+	@Override public double getMotorRPM(int toolhead) {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		return machine.getTool(toolhead).getMotorSpeedRPM();
+	}
+
+	@Deprecated @Override public int getMotorSpeedPWM() {
+		return getMotorSpeedPWM(-1);
+	}
+
+	@Override public int getMotorSpeedPWM(int toolhead) {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		return machine.getTool(toolhead).getMotorSpeedPWM();
 	}
 
 	public double getMotorSteps() {
@@ -546,81 +555,97 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	}
 
 	// TODO: These are backwards?
-	@Override public void readToolStatus() {
+	@Deprecated @Override public void readToolStatus() {
+		readToolStatus(-1);
+	}
+	
+	@Override public void readToolStatus(int toolhead) {
+		
+	}
+	
+	@Deprecated @Override public int getToolStatus() {
+		return getToolStatus(-1);
 	}
 
-	@Override public int getToolStatus() {
-		readToolStatus();
+	@Override public int getToolStatus(int toolhead) {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		readToolStatus(toolhead);
 
-		return machine.currentTool().getToolStatus();
+		return machine.getTool(toolhead).getToolStatus();
 	}
-
 	
 	/***************************************************************************
 	 * Spindle interface functions
+	 * @deprecated
 	 **************************************************************************/
-	@Override public void setSpindleDirection(int dir) {
-		machine.currentTool().setSpindleDirection(dir);
+	@Deprecated @Override public void setSpindleDirection(int dir) {
+		setSpindleDirection(dir, -1);
 	}
 
-	@Override public void setSpindleRPM(double rpm) throws RetryException {
+	@Deprecated @Override public void setSpindleDirection(int dir, int toolhead) {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		machine.getTool(toolhead).setSpindleDirection(dir);
+	}
+
+	@Deprecated @Override public void setSpindleRPM(double rpm) throws RetryException {
 		setSpindleRPM(rpm, -1);
 	}
 
-	@Override public void setSpindleSpeedPWM(int pwm) throws RetryException {
+	@Deprecated @Override public void setSpindleSpeedPWM(int pwm) throws RetryException {
 		setSpindleSpeedPWM(pwm, -1);
 	}
 
-	@Override public void enableSpindle() throws RetryException {
+	@Deprecated @Override public void enableSpindle() throws RetryException {
 		enableSpindle(-1);
 	}
 
-	@Override public void disableSpindle() throws RetryException {
+	@Deprecated @Override public void disableSpindle() throws RetryException {
 		disableSpindle(-1);
 	}
 	
-	/*
-	 * N.B. the methods below are dead code!  They should be added
-	 * to the Driver interface.
-	 */
-	
-	public void setSpindleRPM(double rpm, int toolhead) throws RetryException {
+	@Override public void setSpindleRPM(double rpm, int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
 		machine.getTool(toolhead).setSpindleSpeedRPM(rpm);
 	}
 
-	public void setSpindleSpeedPWM(int pwm, int toolhead) throws RetryException {
+	@Override public void setSpindleSpeedPWM(int pwm, int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
 		machine.getTool(toolhead).setSpindleSpeedPWM(pwm);
 	}
 
-	public void enableSpindle(int toolhead) throws RetryException {
+	@Override public void enableSpindle(int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
 		machine.getTool(toolhead).enableSpindle();
 	}
 
-	public void disableSpindle(int toolhead) throws RetryException {
+	@Override public void disableSpindle(int toolhead) throws RetryException {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
 		machine.getTool(toolhead).disableSpindle();
 	}
 	
-	/*
-	 * End of dead code.
-	 */
-
-	@Override public double getSpindleRPM() {
-		return machine.currentTool().getSpindleSpeedReadingRPM();
+	@Deprecated @Override public double getSpindleRPM() {
+		return getSpindleRPM(-1);
+	}
+	
+	@Override public double getSpindleRPM(int toolhead) {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		return machine.getTool(toolhead).getSpindleSpeedReadingRPM();
 	}
 
-	@Override public int getSpindleSpeedPWM() {
+	@Deprecated @Override public int getSpindleSpeedPWM() {
+		return getSpindleSpeedPWM(-1);
+	}
+	
+	@Override public int getSpindleSpeedPWM(int toolhead) {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
 		return machine.currentTool().getSpindleSpeedReadingPWM();
 	}
 	
@@ -642,12 +667,11 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine.getTool(toolhead).setTargetTemperature(temperature);
 	}
 
-	@Override public void readTemperature() {
-
+	@Deprecated @Override public void readTemperature() {
+		readTemperature(-1);
 	}
 	
-	// Dead code!
-	public void readTemperature(int toolhead) {
+	@Override public void readTemperature(int toolhead) {
 
 	}
 
@@ -690,7 +714,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		this.readPlatformTemperature(-1);
 	}
 
-	public void readPlatformTemperature(int toolhead) {
+	@Override public void readPlatformTemperature(int toolhead) {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 	
@@ -778,8 +802,7 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		return hasAutomatedBuildPlatform(-1);
 	}
 
-	// Dead code!
-	public boolean hasAutomatedBuildPlatform(int toolhead)
+	private boolean hasAutomatedBuildPlatform(int toolhead)
 	{
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
@@ -789,23 +812,22 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	/***************************************************************************
 	 * Valve interface functions
 	 * @throws RetryException 
+	 * @deprecated
 	 **************************************************************************/
-	@Override public void openValve() throws RetryException {
+	@Deprecated @Override public void openValve() throws RetryException {
 		openValve(-1);
 	}
 
-	@Override public void closeValve() throws RetryException {
+	@Deprecated @Override public void closeValve() throws RetryException {
 		closeValve(-1);
 	}
 	
-	// Dead code!
-	public void openValve(int toolhead) throws RetryException {
+	@Override public void openValve(int toolhead) throws RetryException {
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 		machine.getTool(toolhead).openValve();
 	}
 
-	// Dead code!
-	public void closeValve(int toolhead) throws RetryException {
+	@Override public void closeValve(int toolhead) throws RetryException {
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 		machine.getTool(toolhead).closeValve();
 	}
@@ -886,12 +908,22 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 	@Override public void setChamberTemperature(double temperature) {
 	}
 
-	@Override public double getPlatformTemperatureSetting() {
-		return machine.currentTool().getPlatformTargetTemperature();
+	@Deprecated @Override public double getPlatformTemperatureSetting() {
+		return getPlatformTemperatureSetting(-1);
+	}
+	
+	@Override public double getPlatformTemperatureSetting(int toolhead) {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		return machine.getTool(toolhead).getPlatformTargetTemperature();
 	}
 
-	@Override public double getTemperatureSetting() {
-		return machine.currentTool().getTargetTemperature();
+	@Deprecated @Override public double getTemperatureSetting() {
+		return getTemperatureSetting(-1);
+	}
+	
+	@Override public double getTemperatureSetting(int toolhead) {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		return machine.getTool(toolhead).getTargetTemperature();
 	}
 
 	@Override public void storeHomePositions(EnumSet<AxisId> axes) throws RetryException {

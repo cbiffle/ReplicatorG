@@ -933,12 +933,6 @@ public class Sanguino3GDriver extends SerialDriver implements
 		super.setMotorRPM(rpm, toolhead);
 	}
 
-	
-	@Deprecated @Override public void setMotorSpeedPWM(int pwm) throws RetryException {
-		this.setMotorSpeedPWM(pwm, machine.currentTool().getIndex());
-	}
-	
-	
 	@Override public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException {
 	
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
@@ -1015,7 +1009,7 @@ public class Sanguino3GDriver extends SerialDriver implements
 		super.disableMotor(toolhead);
 	}
 
-	private int getMotorSpeedPWM(int toolhead) {
+	@Override public int getMotorSpeedPWM(int toolhead) {
 
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
@@ -1038,12 +1032,7 @@ public class Sanguino3GDriver extends SerialDriver implements
 		return pwm;
 	}
 
-	@Override public double getMotorRPM()
-	{
-		return getMotorRPM(machine.currentTool().getIndex());
-	}
-	
-	private double getMotorRPM(int toolhead) {
+	@Override public double getMotorRPM(int toolhead) {
 		
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
@@ -1068,8 +1057,7 @@ public class Sanguino3GDriver extends SerialDriver implements
 		return rpm;
 	}
 
-	private void readToolStatus(int toolhead) {
-
+	@Override public void readToolStatus(int toolhead) {
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
@@ -1296,7 +1284,7 @@ public class Sanguino3GDriver extends SerialDriver implements
 		super.disableSpindle(toolhead);
 	}
 
-	private double getSpindleSpeedRPM(int toolhead) throws RetryException {
+	@Override public double getSpindleRPM(int toolhead) {
 
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
@@ -1305,7 +1293,7 @@ public class Sanguino3GDriver extends SerialDriver implements
 				MotherboardCommandCode.TOOL_QUERY.getCode());
 		pb.add8((byte) toolhead);
 		pb.add8(ToolCommandCode.GET_MOTOR_2_RPM.getCode());
-		PacketResponse pr = runCommand(pb.getPacket());
+		PacketResponse pr = runQuery(pb.getPacket());
 
 		// convert back to RPM
 		long micros = pr.get32();
@@ -1319,7 +1307,7 @@ public class Sanguino3GDriver extends SerialDriver implements
 		return rpm;
 	}
 
-	private int getSpindleSpeedPWM(int toolhead) {
+	@Override public int getSpindleSpeedPWM(int toolhead) {
 
 		/// toolhead -1 indicate auto-detect.Fast hack to get software out..
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
@@ -1432,15 +1420,6 @@ public class Sanguino3GDriver extends SerialDriver implements
 		
 		machine.getTool(toolhead).setPlatformTargetTemperature(temperature);
 
-	}
-
-	private void setAllPlatformTemperatures(double temperature) throws RetryException {
-		// constrain our temperature.
-		//Set the platform temperature for any & every tool with an HBP
-		for(ToolModel t : machine.getTools())
-		{
-			this.setPlatformTemperature(temperature, t.getIndex());
-		}
 	}
 
 	@Override public void readPlatformTemperature(int toolhead) {
@@ -2569,7 +2548,7 @@ public class Sanguino3GDriver extends SerialDriver implements
 		writeToEEPROM(Sanguino3GEEPRPOM.EEPROM_ESTOP_CONFIGURATION_OFFSET, b);
 	}
 
-	protected double getPlatformTemperatureSetting(int toolhead) {
+	@Override public double getPlatformTemperatureSetting(int toolhead) {
 		/// toolhead -1 indicates auto-detect. Fast hack to get software out...
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 
@@ -2588,7 +2567,7 @@ public class Sanguino3GDriver extends SerialDriver implements
 		return machine.getTool(toolhead).getPlatformTargetTemperature();
 	}
 
-	protected double getTemperatureSetting(int toolhead) {
+	@Override public double getTemperatureSetting(int toolhead) {
 		/// toolhead -1 indicates auto-detect. Fast hack to get software out...
 		if(toolhead == -1 ) toolhead = machine.currentTool().getIndex();
 

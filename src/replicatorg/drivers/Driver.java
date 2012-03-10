@@ -263,9 +263,12 @@ public interface Driver {
 	 */
 	public void changeGearRatio(int ratioIndex);
 	
-	public void readToolStatus();
+	@Deprecated public void readToolStatus();
+	public void readToolStatus(int toolhead);
 	
-	public int getToolStatus();
+	@Deprecated public int getToolStatus();
+	public int getToolStatus(int toolhead);
+	
 
 	/***************************************************************************
 	 * Motor interface functions
@@ -278,9 +281,11 @@ public interface Driver {
 	@Deprecated public void setMotorSpeedPWM(int pwm) throws RetryException;
 	public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException;
 
-	public double getMotorRPM();
+	@Deprecated public double getMotorRPM();
+	public double getMotorRPM(int toolhead);
 
-	public int getMotorSpeedPWM();
+	@Deprecated public int getMotorSpeedPWM();
+	public int getMotorSpeedPWM(int toolhead);
 
 	/**
 	 * Enable motor until stopped by disableMotor
@@ -303,19 +308,26 @@ public interface Driver {
 	 * Spindle interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void setSpindleRPM(double rpm) throws RetryException;
+	@Deprecated public void setSpindleRPM(double rpm) throws RetryException;
+	public void setSpindleRPM(double rpm, int toolhead) throws RetryException;
 
-	public void setSpindleSpeedPWM(int pwm) throws RetryException;
+	@Deprecated public void setSpindleSpeedPWM(int pwm) throws RetryException;
+	public void setSpindleSpeedPWM(int pwm, int toolhead) throws RetryException;
 
-	public void setSpindleDirection(int dir);
+	@Deprecated public void setSpindleDirection(int dir);
+	public void setSpindleDirection(int dir, int toolhead);
 
-	public double getSpindleRPM();
+	@Deprecated public double getSpindleRPM();
+	public double getSpindleRPM(int toolhead);
 
-	public int getSpindleSpeedPWM();
+	@Deprecated public int getSpindleSpeedPWM();
+	public int getSpindleSpeedPWM(int toolhead);
 
-	public void enableSpindle() throws RetryException;
+	@Deprecated public void enableSpindle() throws RetryException;
+	public void enableSpindle(int toolhead) throws RetryException;
 
-	public void disableSpindle() throws RetryException;
+	@Deprecated public void disableSpindle() throws RetryException;
+	public void disableSpindle(int toolhead) throws RetryException;
 
 	/***************************************************************************
 	 * Temperature interface functions
@@ -323,11 +335,15 @@ public interface Driver {
 	 **************************************************************************/
 	@Deprecated public void setTemperature(double temperature) throws RetryException;
 	public void setTemperature(double temperature, int toolIndex) throws RetryException;
-	public void readTemperature();
 	
-	public double getTemperature();
+	@Deprecated public void readTemperature();
+	public void readTemperature(int toolhead);
 	
-	public double getTemperatureSetting();
+	@Deprecated public double getTemperature();
+	public double getTemperature(int toolhead);
+	
+	@Deprecated public double getTemperatureSetting();
+	public double getTemperatureSetting(int toolhead);
 	
 	/***************************************************************************
 	 * Platform Temperature interface functions
@@ -336,11 +352,14 @@ public interface Driver {
 	@Deprecated public void setPlatformTemperature(double temperature) throws RetryException;
 	public void setPlatformTemperature(double temperature, int toolIndex) throws RetryException;
 	
-	public void readPlatformTemperature();
+	@Deprecated public void readPlatformTemperature();
+	public void readPlatformTemperature(int toolhead);
 	
-	public double getPlatformTemperature();
+	@Deprecated public double getPlatformTemperature();
+	public double getPlatformTemperature(int toolhead);
 
-	public double getPlatformTemperatureSetting();
+	@Deprecated public double getPlatformTemperatureSetting();
+	public double getPlatformTemperatureSetting(int toolhead);
 
 	/***************************************************************************
 	 * Build chamber interface functions
@@ -387,9 +406,11 @@ public interface Driver {
 	 * Valve interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	public void openValve() throws RetryException;
+	@Deprecated public void openValve() throws RetryException;
+	public void openValve(int toolhead) throws RetryException;
 
-	public void closeValve() throws RetryException;
+	@Deprecated public void closeValve() throws RetryException;
+	public void closeValve(int toolhead) throws RetryException;
 
 	/*************************************************************************
 	 * Potentiometer interface

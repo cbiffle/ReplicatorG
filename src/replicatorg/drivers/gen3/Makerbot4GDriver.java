@@ -140,7 +140,7 @@ public class Makerbot4GDriver extends Sanguino3GDriver {
 	 */
 	@Override public void enableMotor(int toolhead) throws RetryException {
         if (toolhead == -1 ) toolhead = machine.currentTool().getIndex();
-		machine.currentTool().enableMotor();
+		machine.getTool(toolhead).enableMotor();
 	}
 	
 	/**
@@ -148,16 +148,16 @@ public class Makerbot4GDriver extends Sanguino3GDriver {
 	 */
 	@Override public void disableMotor(int toolhead) throws RetryException {
 	    if (toolhead == -1 ) toolhead = machine.currentTool().getIndex();
-		machine.currentTool().disableMotor();
+		machine.getTool(toolhead).disableMotor();
 	}
 	
 	/**
 	 * Overridden to not talk to the DC motor driver. This driver is reused for the stepper motor fan
-	 * @deprecated
 	 */
-	@Deprecated @Override
-	public void setMotorSpeedPWM(int pwm) throws RetryException {
-		machine.currentTool().setMotorSpeedPWM(pwm);
+	@Override
+	public void setMotorSpeedPWM(int pwm, int toolhead) throws RetryException {
+		if (toolhead == -1) toolhead = machine.currentTool().getIndex();
+		machine.getTool(toolhead).setMotorSpeedPWM(pwm);
 	}
 
 	/**
