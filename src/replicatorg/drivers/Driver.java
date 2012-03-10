@@ -380,7 +380,6 @@ public interface Driver {
 	 * abp interface functions
 	 * @throws RetryException 
 	 **************************************************************************/
-	@Deprecated public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException;
 	public void setAutomatedBuildPlatformRunning(boolean state, int toolhead) throws RetryException;
 	
 	/***************************************************************************

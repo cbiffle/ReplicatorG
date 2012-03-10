@@ -700,10 +700,6 @@ public abstract class DriverBaseImplementation implements Driver, DriverQueryInt
 		machine.getTool(toolhead).disableFan();
 	}
 	
-	
-	@Deprecated @Override public void setAutomatedBuildPlatformRunning(boolean state) throws RetryException {
-		this.setAutomatedBuildPlatformRunning(state, machine.currentTool().getIndex());
-	}
 	@Override
 	public void setAutomatedBuildPlatformRunning(boolean state, int toolhead)
 			throws RetryException {
