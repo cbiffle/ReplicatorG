@@ -12,4 +12,9 @@ public class Preconditions {
 		if (value < 0) throw new IllegalArgumentException(message);
 		return value;
 	}
+	
+	public static <T> T checkNotNull(T value) {
+		if (value == null) throw new NullPointerException();
+		return value;
+	}
 }

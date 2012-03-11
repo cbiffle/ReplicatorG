@@ -48,6 +48,8 @@
 
 package replicatorg.app.gcode;
 
+import static replicatorg.util.Preconditions.*;
+
 import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -68,20 +70,11 @@ import replicatorg.util.Point5d;
 
 public class GCodeParser {
 	// our driver we use.
-	protected DriverQueryInterface driver;
-	
-	/*
-	 * We used to have all of this drilling code here.
-	 * Over lunch we decided it didn't need to stay here.
-	 * Now it's gone.
-	 */
+	private final DriverQueryInterface driver;
 	
 	// Arc drawing routine
 	// Note: 5D is not supported
-	Queue< DriverCommand > drawArc(Point5d center, Point5d endpoint, boolean clockwise) {
-		// System.out.println("Arc from " + current.toString() + " to " +
-		// endpoint.toString() + " with center " + center);
-
+	private Queue< DriverCommand > drawArc(Point5d center, Point5d endpoint, boolean clockwise) {
 		Queue< DriverCommand > points = new LinkedList< DriverCommand >();
 		
 		// angle variables.
@@ -158,62 +151,42 @@ public class GCodeParser {
 	}
 	
 	// our curve section variables.
-	public static double curveSectionMM = Base.preferences.getDouble("replicatorg.parser.curve_segment_mm", 1.0);
-	public static double curveSectionInches = curveSectionMM / 25.4;
+	public static final double curveSectionMM = Base.preferences.getDouble("replicatorg.parser.curve_segment_mm", 1.0);
+	public static final double curveSectionInches = curveSectionMM / 25.4;
 
-	protected double curveSection = 0.0;
+	private double curveSection = 0.0;
 
 	// our offset variables 0 = master, 1-6 = offsets 1-6
-	protected Point3d currentOffset;
+	private Point3d currentOffset;
 
 	// false = incremental; true = absolute
-	boolean absoluteMode = false;
+	private boolean absoluteMode = false;
 
 	// our feedrate variables.
 	/**
 	 * Feedrate in mm/minute.
 	 */
-	double feedrate = 0.0;
+	private double feedrate = 0.0;
 
 	// current selected tool
 	private int tool = ToolheadAlias.SINGLE.number;
 
 	// unit variables.
-	public static int UNITS_MM = 0;
+	public static final int UNITS_MM = 0;
 
-	public static int UNITS_INCHES = 1;
+	public static final int UNITS_INCHES = 1;
 
-	protected int units;
+	private int units;
 	
 	/**
 	 * Creates the driver object.
 	 */
-	public GCodeParser() {
+	public GCodeParser(DriverQueryInterface driver) {
 		// we default to millimeters
 		units = UNITS_MM;
 		curveSection = curveSectionMM;
 
-		// init our offset
-		currentOffset = new Point3d();
-	}
-
-	/**
-	 * Get the maximum feed rate from the driver's model.
-	 */
-	protected double getMaxFeedrate() {
-		// TODO: right now this is defaulting to the x feedrate. We should
-		// eventually check for z-axis motions and use that feedrate. We should
-		// also either alter the model, or post a warning when the x and y
-		// feedrates differ.
-		return driver.getMaximumFeedrates().x();
-	}
-
-	/**
-	 * initialize parser with values from the driver
-	 */
-	public void init(DriverQueryInterface drv) {
-		// our driver class
-		driver = drv;
+		this.driver = checkNotNull(driver);
 		
 		// init our offset variables
 		currentOffset = driver.getOffset(0);
@@ -222,7 +195,11 @@ public class GCodeParser {
 	/**
 	 * Parses a line of GCode, sets up the variables, etc.
 	 * 
-	 * @param String cmd a line of GCode to parse
+	 * @param cmd a line of GCode to parse
+	 * @param commandQueue queue of commands, where new commands will be
+	 *     appended.
+	 * @return {@code true} if the GCode parses successfully, {@code false}
+	 *     otherwise.
 	 */
 	public boolean parse(String cmd, Queue< DriverCommand > commandQueue) {
 		

@@ -67,12 +67,10 @@ public class Direct implements MachineBuilder{
 		} else {
 			building = true;
 			// Set up a parser to talk to the driver
-			parser = new GCodeParser();
+			parser = new GCodeParser((DriverQueryInterface) driver);
 			
 			// Queue of commands that we get from the parser, and run on the driver.
 			driverQueue = new LinkedList< DriverCommand >();
-			
-			parser.init((DriverQueryInterface) driver);
 		}
 		
 		if (simulator == null) {
@@ -82,12 +80,10 @@ public class Direct implements MachineBuilder{
 			
 			this.simulator = simulator;
 			// And the one for the simulator
-			simulationParser = new GCodeParser();
+			simulationParser = new GCodeParser((DriverQueryInterface) simulator);
 			
 			// Queue of commands that we get from the parser, and run on the driver.
 			simulatorQueue = new LinkedList< DriverCommand >();
-			
-			simulationParser.init((DriverQueryInterface) simulator);
 		}
 		
 		simulating = false;

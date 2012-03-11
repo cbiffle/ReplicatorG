@@ -479,8 +479,7 @@ public class Machine implements MachineInterface {
 		
 		Queue<DriverCommand> estimatorQueue = new LinkedList<DriverCommand>();
 
-		GCodeParser estimatorParser = new GCodeParser();
-		estimatorParser.init(estimator);
+		GCodeParser estimatorParser = new GCodeParser(estimator);
 
 		// run each line through the estimator
 		for (String line : source) {
