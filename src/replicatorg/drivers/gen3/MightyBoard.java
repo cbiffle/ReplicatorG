@@ -1019,7 +1019,6 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 	}
 
 
-	@Override
 	@Deprecated
 	protected void writeToToolEEPROM(int offset, byte[] data) {
 		writeToToolEEPROM(offset, data, machine.currentTool().getIndex());
@@ -1182,7 +1181,6 @@ public class MightyBoard extends Makerbot4GAlternateDriver
 		return val;
 	}
 
-	@Override
 	@Deprecated
 	protected int read16FromToolEEPROM(int offset, int defaultValue) {
 		return read16FromToolEEPROM(offset, defaultValue, machine.currentTool().getIndex());
